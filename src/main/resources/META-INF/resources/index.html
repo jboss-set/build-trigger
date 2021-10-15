@@ -2,175 +2,158 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>build-trigger - 1.0.0-SNAPSHOT</title>
-    <style>
-        h1, h2, h3, h4, h5, h6 {
-            margin-bottom: 0.5rem;
-            font-weight: 400;
-            line-height: 1.5;
-        }
+    <title>Component build</title>
 
-        h1 {
-            font-size: 2.5rem;
-        }
-
-        h2 {
-            font-size: 2rem
-        }
-
-        h3 {
-            font-size: 1.75rem
-
-        }
-
-        h4 {
-            font-size: 1.5rem
-        }
-
-        h5 {
-            font-size: 1.25rem
-        }
-
-        h6 {
-            font-size: 1rem
-        }
-
-        .lead {
-            font-weight: 300;
-            font-size: 2rem;
-        }
-
-        .banner {
-            font-size: 2.7rem;
-            margin: 0;
-            padding: 2rem 1rem;
-            background-color: #0d1c2c;
-            color: white;
-        }
-
-        body {
-            margin: 0;
-            font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-        }
-
-        code {
-            font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            font-size: 87.5%;
-            color: #e83e8c;
-            word-break: break-word;
-        }
-
-        .left-column {
-            padding: .75rem;
-            max-width: 75%;
-            min-width: 55%;
-        }
-
-        .right-column {
-            padding: .75rem;
-            max-width: 25%;
-        }
-
-        .container {
-            display: flex;
-            width: 100%;
-        }
-
-        li {
-            margin: 0.75rem;
-        }
-
-        .right-section {
-            margin-left: 1rem;
-            padding-left: 0.5rem;
-        }
-
-        .right-section h3 {
-            padding-top: 0;
-            font-weight: 200;
-        }
-
-        .right-section ul {
-            border-left: 0.3rem solid #71aeef;
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .example-code {
-            border-left: 0.3rem solid #71aeef;
-            padding-left: 10px;
-        }
-
-        .example-code h3 {
-            font-weight: 200;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly-additions.min.css">
 </head>
 <body>
 
-<div class="banner lead">
-    Your new Cloud-Native application is ready!
-</div>
-
 <div class="container">
-    <div class="left-column">
-        <p class="lead"> Congratulations, you have created a new Quarkus cloud application.</p>
 
-        <h2>What is this page?</h2>
+    <h1>Component build</h1>
 
-        <p>This page is served by Quarkus. The source is in
-            <code>src/main/resources/META-INF/resources/index.html</code>.</p>
-
-        <h2>What are your next steps?</h2>
-
-        <p>If not already done, run the application in <em>dev mode</em> using: <code>./mvnw compile quarkus:dev</code>.
-        </p>
-        <ul>
-            <li>Your static assets are located in <code>src/main/resources/META-INF/resources</code>.</li>
-            <li>Configure your application in <code>src/main/resources/application.properties</code>.</li>
-            <li>Quarkus now ships with a <a href="/q/dev/">Dev UI</a> (available in dev mode only)</li>
-            <li>Play with the getting started example code located in <code>src/main/java</code>:</li>
-        </ul>
-                <div class="example-code">
-            <h3>RESTEasy JAX-RS example</h3>
-            <p>REST is easy peasy with this Hello World RESTEasy resource.</p>
-            <p><code>@Path: <a href="/build-trigger" class="path-link" target="_blank">/build-trigger</a></code></p>
-            <p><a href="https://quarkus.io/guides/getting-started#the-jax-rs-resources" class="guide-link" target="_blank">Related guide section...</a></p>
+    <form id="buildForm" class="form-horizontal">
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="upstream">Upstream:</label>
+            <div class="col-md-6">
+                <input type="text" id="upstream" class="form-control">
+            </div>
         </div>
 
-    </div>
-    <div class="right-column">
-        <div class="right-section">
-            <h3>Application</h3>
-            <ul>
-                <li>GroupId: <code>io.xstefank</code></li>
-                <li>ArtifactId: <code>build-trigger</code></li>
-                <li>Version: <code>1.0.0-SNAPSHOT</code></li>
-                <li>Quarkus Version: <code>1.13.7.Final</code></li>
-            </ul>
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="version">Version:</label>
+            <div class="col-md-6">
+                <input type="text" id="version" class="form-control">
+            </div>
         </div>
-        <div class="right-section">
-            <h3>Do you like Quarkus?</h3>
-            <ul>
-                <li>Go give it a star on <a href="https://github.com/quarkusio/quarkus">GitHub</a>.</li>
-            </ul>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="revision">Revision:</label>
+            <div class="col-md-6">
+                <input type="text" id="revision" class="form-control">
+            </div>
         </div>
-        <div class="right-section">
-            <h3>Selected extensions guides</h3>
-            <ul>
-                <li title="REST endpoint framework implementing JAX-RS and more"><a href="https://quarkus.io/guides/rest-json" target="_blank">RESTEasy JAX-RS guide</a></li>
-            </ul>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="script">Script:</label>
+            <div class="col-md-6">
+                <input type="text" id="script" class="form-control">
+            </div>
         </div>
-        <div class="right-section">
-            <h3>More reading</h3>
-            <ul>
-                <li><a href="https://quarkus.io/guides/maven-tooling.html" target="_blank">Setup your IDE</a></li>
-                <li><a href="https://quarkus.io/guides/getting-started.html" target="_blank">Getting started</a></li>
-                <li><a href="https://quarkus.io/guides/" target="_blank">All guides</a></li>
-                <li><a href="https://quarkus.io" target="_blank">Quarkus Web Site</a></li>
-            </ul>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="productName">Product name:</label>
+            <div class="col-md-6">
+                <input type="text" id="productName" class="form-control">
+            </div>
         </div>
-    </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="productVersion">Product version:</label>
+            <div class="col-md-6">
+                <input type="text" id="productVersion" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="openjdk">OpenJDK:</label>
+            <div class="col-md-6">
+                <input type="text" id="openjdk" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="maven">Maven:</label>
+            <div class="col-md-6">
+                <input type="text" id="maven" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10 col-md-offset-2">
+                <button id="build-button" type="submit" class="btn btn-primary">Trigger build</button>
+            </div>
+        </div>
+    </form>
+
 </div>
+
+<div class="container" id="build-trigger-result-message"></div>
+
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/js/patternfly.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
+
+<script>
+
+        $("#buildForm").submit(function(event){
+        const product = {
+            name: $("#productName").val(),
+            version: $("#productVersion").val()
+        };
+
+        const environment = {
+            openjdk: $("#openjdk").val().split(',').map(s => s.trim()),
+            maven: $("#maven").val().split(',').map(s => s.trim())
+        }
+
+        const buildInfo = {
+            upstream: $("#upstream").val(),
+            version: $("#version").val(),
+            revision: $("#revision").val(),
+            script: $("#script").val(),
+            product: product,
+            environment: environment
+        }
+        console.log("BuildInfo: " + JSON.stringify(buildInfo));
+
+        event.preventDefault();
+
+        bootbox.confirm({
+            title: 'You are about to trigger productization build with the following information:',
+            message: '<div>' +
+            '<p><b>Upstream: </b>' + buildInfo.upstream + '</p>' +
+            '<p><b>Version: </b>' + buildInfo.version + '</p>' +
+            '<p><b>Revision: </b>' + buildInfo.revision + '</p>' +
+            '<p><b>Script: </b>' + buildInfo.script + '</p>' +
+            '<p><b>Product name: </b>' + buildInfo.product.name + '</p>' +
+            '<p><b>Product version: </b>' + buildInfo.product.version + '</p>' +
+            '<p><b>OpenJDK: </b>' + buildInfo.environment.openjdk.join(', ') + '</p>' +
+            '<p><b>Maven: </b>' + buildInfo.environment.maven.join(', ') + '</p>' +
+            '</div>',
+            callback: function(result) {
+                if (result) {
+                    const post_url = "/trigger"; //get form action url
+                    const request_method = "POST"; //get form GET/POST method
+
+                    $.ajax({
+                        url: post_url,
+                        type: request_method,
+                        data: JSON.stringify(buildInfo),
+                        contentType: 'application/json',
+                        cache: false
+                    }).done(function (response) {
+                        $("#build-trigger-result-message").append("<div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span class='pficon pficon-close'></span></button><span class='pficon pficon-ok'></span><strong>Success </strong>" + response + "</div>");
+                        $("#build-button").removeClass("disabled").removeAttr("disabled");
+                    }).fail(function (err) {
+                        $("#build-trigger-result-message").append("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span class='pficon pficon-close'></span></button><span class='pficon pficon-error-circle-o'></span><strong>Error </strong>" + err.responseText + "</div>");
+                        $("#build-button").removeClass("disabled").removeAttr("disabled");
+                        console.error(err);
+                    });
+                }
+            },
+            buttons: {
+                confirm: {
+                    label: 'Send'
+                }
+            }
+        });
+    });
+
+</script>
 </html>
