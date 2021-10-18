@@ -8,11 +8,13 @@ import javax.inject.Inject;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSContext;
 import javax.jms.Session;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 
 @ApplicationScoped
 public class BuildTrigger {
 
-    @ConfigProperty(name = "topic")
+    @ConfigProperty(name = "build-trigger.topic")
     String topic;
 
     @ConfigProperty(name = "quarkus.qpid-jms.url")
@@ -21,11 +23,11 @@ public class BuildTrigger {
     @Inject
     ConnectionFactory connectionFactory;
 
+    Jsonb jsonb = JsonbBuilder.create();
+
     public void triggerBuild(BuildInfo payloadMessage) {
-        System.out.println(topic);
-        System.out.println(url);
         try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
-            context.createProducer().send(context.createTopic(topic), "test message from build trigger app");
+            context.createProducer().send(context.createTopic(topic), jsonb.toJson(payloadMessage));
         }
     }
 }
