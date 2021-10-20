@@ -17,9 +17,6 @@ public class BuildTrigger {
     @ConfigProperty(name = "build-trigger.topic")
     String topic;
 
-    @ConfigProperty(name = "quarkus.qpid-jms.url")
-    String url;
-
     @Inject
     ConnectionFactory connectionFactory;
 
