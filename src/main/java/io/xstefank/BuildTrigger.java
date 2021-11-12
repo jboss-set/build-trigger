@@ -1,6 +1,7 @@
 package io.xstefank;
 
 import io.xstefank.model.json.BuildInfo;
+import io.xstefank.model.json.CreateBuildPayload;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -22,7 +23,7 @@ public class BuildTrigger {
 
     Jsonb jsonb = JsonbBuilder.create();
 
-    public void triggerBuild(BuildInfo payloadMessage) {
+    public void triggerBuild(CreateBuildPayload payloadMessage) {
         try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
             context.createProducer().send(context.createTopic(topic), jsonb.toJson(payloadMessage));
         }
