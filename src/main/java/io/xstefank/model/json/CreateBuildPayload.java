@@ -23,4 +23,17 @@ public class CreateBuildPayload {
 
         return createBuildPayload;
     }
+
+    @Override
+    public String toString() {
+        return "CreateBuildPayload{" +
+            "email='" + email + '\'' +
+            ", product=" + product +
+            ", environment=" + environment +
+            ", upstream='" + upstream + '\'' +
+            ", revision='" + revision + '\'' +
+            ", script='" + script + '\'' +
+            ", version='" + version + '\'' +
+            '}';
+    }
 }
