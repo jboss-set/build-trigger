@@ -20,56 +20,60 @@
         <div class="form-group">
             <label class="col-md-2 control-label" for="upstream">Upstream:</label>
             <div class="col-md-6">
-                <input type="text" id="upstream" class="form-control" placeholder="https://github.com/<organization>/<repository>" required>
+                <select id="upstream" class="form-control" required>
+                    <option value="asdf">asdf</option>
+                    <option value="asdf2">asdf2</option>
+                    <option value="asdf3">asdf3</option>
+                </select>
             </div>
         </div>
 
         <div class="form-group">
             <label class="col-md-2 control-label" for="version">Version:</label>
             <div class="col-md-6">
-                <input type="text" id="version" class="form-control" placeholder="x.y.z[.Final/.GA/.SPn]" required>
+                <input type="text" id="version" class="form-control" required>
             </div>
         </div>
 
         <div class="form-group">
             <label class="col-md-2 control-label" for="revision">Revision:</label>
             <div class="col-md-6">
-                <input type="text" id="revision" class="form-control" placeholder="Full commit SHA (e.g., 03ebee9204785a8ea078b0e5cf1de54deb317167)" required>
+                <input type="text" id="revision" class="form-control" required>
             </div>
         </div>
 
         <div class="form-group">
             <label class="col-md-2 control-label" for="script">Script:</label>
             <div class="col-md-6">
-                <input type="text" id="script" class="form-control" placeholder="mvn -Prelease -Dinsecure.repositories=WARN -DperformRelease deploy" required>
+                <input type="text" id="script" class="form-control" required>
             </div>
         </div>
 
         <div class="form-group">
             <label class="col-md-2 control-label" for="productName">Product name:</label>
             <div class="col-md-6">
-                <input type="text" id="productName" class="form-control" placeholder="eap" required>
+                <input type="text" id="productName" class="form-control" required>
             </div>
         </div>
 
         <div class="form-group">
             <label class="col-md-2 control-label" for="productVersion">Product version:</label>
             <div class="col-md-6">
-                <input type="text" id="productVersion" class="form-control" placeholder="7.3.9" required>
+                <input type="text" id="productVersion" class="form-control" required>
             </div>
         </div>
 
         <div class="form-group">
             <label class="col-md-2 control-label" for="openjdk">OpenJDK:</label>
             <div class="col-md-6">
-                <input type="text" id="openjdk" class="form-control" placeholder="8[, 11]" required>
+                <input type="text" id="openjdk" class="form-control" required>
             </div>
         </div>
 
         <div class="form-group">
             <label class="col-md-2 control-label" for="maven">Maven:</label>
             <div class="col-md-6">
-                <input type="text" id="maven" class="form-control" placeholder="3.3.9[, 3.8.1]" required>
+                <input type="text" id="maven" class="form-control" required>
             </div>
         </div>
 
@@ -92,7 +96,34 @@
 
 <script>
 
-        $("#buildForm").submit(function(event){
+    $("#upstream").click(function () {
+            const selected = $("#upstream option:selected").text();
+            console.log("selected " + selected)
+            const get_path = "/" + selected;
+            console.log(get_path)
+            $.ajax({
+                url: get_path,
+                type: "GET",
+                cache: false
+            }).done(function (response) {
+                $("#upstream").val(response.upstream);
+                $("#version").val(response.version);
+                $("#revision").val(response.revision);
+            }).fail(function (err) {
+                $("#build-trigger-result-message").append("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span class='pficon pficon-close'></span></button><span class='pficon pficon-error-circle-o'></span><strong>Error </strong>" + err.responseText + "</div>");
+                $("#build-button").removeClass("disabled").removeAttr("disabled");
+                console.error(err);
+            });
+
+        }
+    )
+
+    // const upstreamSelect = document.querySelector('#upstream');
+    // upstreamSelect.addEventListener('change', function () {
+    //     console.log('selected ' + $("#upstream").find(":selected").text())
+    // });
+
+    $("#buildForm").submit(function (event) {
         const product = {
             name: $("#productName").val(),
             version: $("#productVersion").val()
@@ -118,16 +149,16 @@
         bootbox.confirm({
             title: 'You are about to trigger productization build with the following information:',
             message: '<div>' +
-            '<p><b>Upstream: </b>' + buildInfo.upstream + '</p>' +
-            '<p><b>Version: </b>' + buildInfo.version + '</p>' +
-            '<p><b>Revision: </b>' + buildInfo.revision + '</p>' +
-            '<p><b>Script: </b>' + buildInfo.script + '</p>' +
-            '<p><b>Product name: </b>' + buildInfo.product.name + '</p>' +
-            '<p><b>Product version: </b>' + buildInfo.product.version + '</p>' +
-            '<p><b>OpenJDK: </b>' + buildInfo.environment.openjdk.join(', ') + '</p>' +
-            '<p><b>Maven: </b>' + buildInfo.environment.maven.join(', ') + '</p>' +
-            '</div>',
-            callback: function(result) {
+                '<p><b>Upstream: </b>' + buildInfo.upstream + '</p>' +
+                '<p><b>Version: </b>' + buildInfo.version + '</p>' +
+                '<p><b>Revision: </b>' + buildInfo.revision + '</p>' +
+                '<p><b>Script: </b>' + buildInfo.script + '</p>' +
+                '<p><b>Product name: </b>' + buildInfo.product.name + '</p>' +
+                '<p><b>Product version: </b>' + buildInfo.product.version + '</p>' +
+                '<p><b>OpenJDK: </b>' + buildInfo.environment.openjdk.join(', ') + '</p>' +
+                '<p><b>Maven: </b>' + buildInfo.environment.maven.join(', ') + '</p>' +
+                '</div>',
+            callback: function (result) {
                 if (result) {
                     const post_url = "/trigger"; //get form action url
                     const request_method = "POST"; //get form GET/POST method

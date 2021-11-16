@@ -1,6 +1,6 @@
 package io.xstefank.model.json;
 
-public class CreateBuildPayload {
+public class TriggerBuildPayload {
 
     public String email;
     public Product product;
@@ -10,8 +10,8 @@ public class CreateBuildPayload {
     public String script;
     public String version;
 
-    public static CreateBuildPayload from(BuildInfo buildInfo, String email) {
-        CreateBuildPayload createBuildPayload = new CreateBuildPayload();
+    public static TriggerBuildPayload from(BuildInfo buildInfo, String email) {
+        TriggerBuildPayload createBuildPayload = new TriggerBuildPayload();
 
         createBuildPayload.email = email;
         createBuildPayload.product = buildInfo.product;
@@ -26,7 +26,7 @@ public class CreateBuildPayload {
 
     @Override
     public String toString() {
-        return "CreateBuildPayload{" +
+        return "TriggerBuildPayload{" +
             "email='" + email + '\'' +
             ", product=" + product +
             ", environment=" + environment +

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Component build</title>
+
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly-additions.min.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1><b>Component build</b></h1>
+    <br/>
+
+    <form id="buildForm" class="form-horizontal">
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="upstream">Project:</label>
+            <div class="col-md-6">
+                <select id="project" class="form-control" required>
+                    <option hidden selected> -- select an option -- </option>
+                    {#for id in projectIds}
+                    <option value="{id}">{id}</option>
+                    {/for}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="version">Upstream:</label>
+            <div class="col-md-6">
+                <input type="text" id="upstream" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="version">Version:</label>
+            <div class="col-md-6">
+                <input type="text" id="version" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="revision">Revision:</label>
+            <div class="col-md-6">
+                <input type="text" id="revision" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="script">Script:</label>
+            <div class="col-md-6">
+                <input type="text" id="script" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="product">Product:</label>
+            <div class="col-md-6">
+                <select id="product" class="form-control" required>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="openjdk">OpenJDK:</label>
+            <div class="col-md-6">
+                <input type="text" id="openjdk" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="maven">Maven:</label>
+            <div class="col-md-6">
+                <input type="text" id="maven" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-10 col-md-offset-2">
+                <button id="build-button" type="submit" class="btn btn-primary">Trigger build</button>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<div class="container" id="build-trigger-result-message"></div>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/js/patternfly.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
+
+<script>
+
+    $.fn.sortSelect = function() {
+        var op = this.children("option");
+        op.sort(function(a, b) {
+            return a.text > b.text ? 1 : -1;
+        })
+        return this.empty().append(op);
+    }
+
+    $.fn.changeElementType = function(newType) {
+        var newElements = [];
+
+        $(this).each(function() {
+            var attrs = {};
+
+            $.each(this.attributes, function(idx, attr) {
+                attrs[attr.nodeName] = attr.nodeValue;
+            });
+
+            var newElement = $("<" + newType + "/>", attrs).append($(this).contents());
+
+            $(this).replaceWith(newElement);
+
+            newElements.push(newElement);
+        });
+
+        return $(newElements);
+    };
+
+    $("#project").sortSelect();
+
+    $("#project").click(function () {
+            const selected = $("#project option:selected").text();
+            console.log("selected " + selected)
+            const get_path = "/" + selected;
+            console.log(get_path)
+            $.ajax({
+                url: get_path,
+                type: "GET",
+                cache: false
+            }).done(function (response) {
+                $("#project").val(response.project);
+                $("#upstream").val(response.upstream);
+                $("#version").attr("placeholder", " -- please fill in the version -- ");
+                $("#revision").attr("placeholder", " -- please fill in the commit SHA -- ");
+                $("#script").val(response.script);
+
+                console.log(response.product)
+
+                if (response.product.length === 0) {
+                    $("#product").changeElementType("input")
+                    $("#product").attr("placeholder", " -- please fill in the product in form EAP:8.0.x -- ")
+                } else {
+                    var productOptions = "<option hidden selected> -- select an option -- </option>";
+                    for (var i = 0; i < response.product.length; i++) {
+                        productOptions += "<option value=\"" + response.product[i] + "\">" + response.product[i] + "</option>"
+                    }
+
+                    $("#product").html(productOptions);
+                }
+
+                $("#openjdk").val(response.environment.openjdk);
+                $("#maven").val(response.environment.maven);
+            }).fail(function (err) {
+                $("#build-trigger-result-message").append("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span class='pficon pficon-close'></span></button><span class='pficon pficon-error-circle-o'></span><strong>Error </strong>" + err.responseText + "</div>");
+                $("#build-button").removeClass("disabled").removeAttr("disabled");
+                console.error(err);
+            });
+
+        }
+    )
+
+    $("#buildForm").submit(function (event) {
+        const productSplit = $("#product").val().split(":")
+
+        const product = {
+            name: productSplit[0],
+            version: productSplit[1]
+        };
+
+        const environment = {
+            openjdk: $("#openjdk").val().split(',').map(s => s.trim()),
+            maven: $("#maven").val().split(',').map(s => s.trim())
+        }
+
+        const buildInfo = {
+            upstream: $("#upstream").val(),
+            version: $("#version").val(),
+            revision: $("#revision").val(),
+            script: $("#script").val(),
+            product: product,
+            environment: environment
+        }
+        console.log("BuildInfo: " + JSON.stringify(buildInfo));
+
+        event.preventDefault();
+
+        bootbox.confirm({
+            title: 'You are about to trigger productization build with the following information:',
+            message: '<div>' +
+                '<p><b>Project: </b>' + $("#project") + '</p>' +
+                '<p><b>Upstream: </b>' + buildInfo.upstream + '</p>' +
+                '<p><b>Version: </b>' + buildInfo.version + '</p>' +
+                '<p><b>Revision: </b>' + buildInfo.revision + '</p>' +
+                '<p><b>Script: </b>' + buildInfo.script + '</p>' +
+                '<p><b>Product name: </b>' + buildInfo.product.name + '</p>' +
+                '<p><b>Product version: </b>' + buildInfo.product.version + '</p>' +
+                '<p><b>OpenJDK: </b>' + buildInfo.environment.openjdk.join(', ') + '</p>' +
+                '<p><b>Maven: </b>' + buildInfo.environment.maven.join(', ') + '</p>' +
+                '</div>',
+            callback: function (result) {
+                if (result) {
+                    const post_url = "/trigger"; //get form action url
+                    const request_method = "POST"; //get form GET/POST method
+
+                    $.ajax({
+                        url: post_url,
+                        type: request_method,
+                        data: JSON.stringify(buildInfo),
+                        contentType: 'application/json',
+                        cache: false
+                    }).done(function (response) {
+                        $("#build-trigger-result-message").append("<div class='alert alert-success alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span class='pficon pficon-close'></span></button><span class='pficon pficon-ok'></span><strong>Success </strong>" + response + "</div>");
+                        $("#build-button").removeClass("disabled").removeAttr("disabled");
+                    }).fail(function (err) {
+                        $("#build-trigger-result-message").append("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span class='pficon pficon-close'></span></button><span class='pficon pficon-error-circle-o'></span><strong>Error </strong>" + err.responseText + "</div>");
+                        $("#build-button").removeClass("disabled").removeAttr("disabled");
+                        console.error(err);
+                    });
+                }
+            },
+            buttons: {
+                confirm: {
+                    label: 'Send'
+                }
+            }
+        });
+    });
+
+</script>
+</html>
