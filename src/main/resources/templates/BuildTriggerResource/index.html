@@ -153,12 +153,13 @@
                 console.log(response.product)
 
                 if (response.product.length === 0) {
-                    $("#product").changeElementType("input")
-                    $("#product").attr("placeholder", " -- please fill in the product in form EAP:8.0.x -- ")
+                    $("#product").changeElementType("input");
+                    $("#product").attr("placeholder", " -- please fill in the product in form EAP:8.0.x -- ");
                 } else {
+                    $("#product").changeElementType("select");
                     var productOptions = "<option hidden selected> -- select an option -- </option>";
                     for (var i = 0; i < response.product.length; i++) {
-                        productOptions += "<option value=\"" + response.product[i] + "\">" + response.product[i] + "</option>"
+                        productOptions += "<option value=\"" + response.product[i] + "\">" + response.product[i] + "</option>";
                     }
 
                     $("#product").html(productOptions);

@@ -35,8 +35,6 @@ public class PKBIndexer {
             projects.computeIfAbsent(project.project, s -> new ArrayList<>());
             projects.get(project.project).add(project);
         });
-
-        System.out.println(projects.keySet());
     }
 
     public Set<String> getProjectIds() {
@@ -57,7 +55,6 @@ public class PKBIndexer {
             Project project = found.stream().filter(p -> p.stream.equals(stream)).findFirst()
                 .orElseThrow(() ->
                     new NotFoundException(String.format("Project '%s' for stream '%s' not found", id, stream)));
-            System.out.println(project);
             return project;
         }
 
