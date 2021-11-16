@@ -27,7 +27,6 @@ public class PKBIndexer {
     @RestClient
     PKBClient pkbClient;
 
-
     void onStart(@Observes StartupEvent event) {
         projects = new HashMap<>();
 

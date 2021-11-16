@@ -51,17 +51,17 @@
         </div>
 
         <div class="form-group">
-            <label class="col-md-2 control-label" for="script">Script:</label>
-            <div class="col-md-6">
-                <input type="text" id="script" class="form-control" required>
-            </div>
-        </div>
-
-        <div class="form-group">
             <label class="col-md-2 control-label" for="product">Product:</label>
             <div class="col-md-6">
                 <select id="product" class="form-control" required>
                 </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="script">Script:</label>
+            <div class="col-md-6">
+                <input type="text" id="script" class="form-control" required>
             </div>
         </div>
 
@@ -203,17 +203,6 @@
 
         bootbox.confirm({
             title: 'You are about to trigger productization build with the following information:',
-            message: '<div>' +
-                '<p><b>Project: </b>' + $("#project") + '</p>' +
-                '<p><b>Upstream: </b>' + buildInfo.upstream + '</p>' +
-                '<p><b>Version: </b>' + buildInfo.version + '</p>' +
-                '<p><b>Revision: </b>' + buildInfo.revision + '</p>' +
-                '<p><b>Script: </b>' + buildInfo.script + '</p>' +
-                '<p><b>Product name: </b>' + buildInfo.product.name + '</p>' +
-                '<p><b>Product version: </b>' + buildInfo.product.version + '</p>' +
-                '<p><b>OpenJDK: </b>' + buildInfo.environment.openjdk.join(', ') + '</p>' +
-                '<p><b>Maven: </b>' + buildInfo.environment.maven.join(', ') + '</p>' +
-                '</div>',
             callback: function (result) {
                 if (result) {
                     const post_url = "/trigger"; //get form action url
@@ -235,6 +224,17 @@
                     });
                 }
             },
+            message: '<div>' +
+                '<p><b>Project: </b>' + $("#project") + '</p>' +
+                '<p><b>Upstream: </b>' + buildInfo.upstream + '</p>' +
+                '<p><b>Version: </b>' + buildInfo.version + '</p>' +
+                '<p><b>Revision: </b>' + buildInfo.revision + '</p>' +
+                '<p><b>Product name: </b>' + buildInfo.product.name + '</p>' +
+                '<p><b>Product version: </b>' + buildInfo.product.version + '</p>' +
+                '<p><b>Script: </b>' + buildInfo.script + '</p>' +
+                '<p><b>OpenJDK: </b>' + buildInfo.environment.openjdk.join(', ') + '</p>' +
+                '<p><b>Maven: </b>' + buildInfo.environment.maven.join(', ') + '</p>' +
+                '</div>',
             buttons: {
                 confirm: {
                     label: 'Send'
