@@ -129,9 +129,15 @@
     $("#project").sortSelect();
 
     $("#project").click(function () {
-            const selected = $("#project option:selected").text();
+            const selected = $("#project option:selected").text().split(" - ");
             console.log("selected " + selected)
-            const get_path = "/" + selected;
+
+            let get_path = "/" + selected[0];
+
+            if (selected.length > 1) {
+                get_path += "?stream=" + selected[1];
+            }
+
             console.log(get_path)
             $.ajax({
                 url: get_path,

@@ -19,7 +19,7 @@ public class ProjectInfo {
     public static ProjectInfo from(Project project) {
         ProjectInfo buildInfo = new ProjectInfo();
 
-        buildInfo.project = project.project;
+        buildInfo.project = project.project + (project.stream.isBlank() ? "" : " - " + project.stream);
         buildInfo.upstream = project.buildConfiguration.source.scmUrl;
         buildInfo.script = project.buildConfiguration.script;
         buildInfo.product = project.products;

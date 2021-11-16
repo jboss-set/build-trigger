@@ -11,6 +11,7 @@ import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
+import org.jboss.resteasy.annotations.jaxrs.QueryParam;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -42,8 +43,8 @@ public class BuildTriggerResource {
 
     @GET
     @Path("/{id}")
-    public ProjectInfo getProjectInfoFor(@PathParam String id) {
-        return ProjectInfo.from(pkbIndexer.getProject(id));
+    public ProjectInfo getProjectInfoFor(@PathParam String id, @QueryParam String stream) {
+        return ProjectInfo.from(pkbIndexer.getProject(id, stream));
     }
 
 

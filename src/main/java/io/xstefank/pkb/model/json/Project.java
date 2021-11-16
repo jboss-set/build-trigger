@@ -11,4 +11,17 @@ public class Project {
     public BuildConfiguration buildConfiguration;
     public LastBuild lastBuild;
     public List<String> products;
+
+    @Override
+    public String toString() {
+        return "Project{" +
+            "project='" + project + '\'' +
+            ", owner='" + owner + '\'' +
+            ", stream='" + stream + '\'' +
+            ", ga='" + ga + '\'' +
+            ", buildConfiguration=" + buildConfiguration +
+            ", lastBuild=" + lastBuild +
+            ", products=" + products +
+            '}';
+    }
 }
