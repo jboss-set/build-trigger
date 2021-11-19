@@ -21,9 +21,9 @@
             <label class="col-md-2 control-label" for="upstream">Project:</label>
             <div class="col-md-6">
                 <select id="project" class="form-control" required>
-                    <option hidden selected> -- select an option -- </option>
+                    <option hidden selected> -- select an option --</option>
                     {#for id in projectIds}
-                    <option value="{id}">{id}</option>
+                        <option value="{id}">{id}</option>
                     {/for}
                 </select>
             </div>
@@ -51,31 +51,41 @@
         </div>
 
         <div class="form-group">
-            <label class="col-md-2 control-label" for="product">Product:</label>
-            <div class="col-md-6">
-                <select id="product" class="form-control" required>
-                </select>
+            <div class="col-md-10 col-md-offset-2">
+                <button data-toggle="collapse" data-target="#additional-config" class="btn btn-secondary " type="button" style="outline: none">
+                    Additional configurations
+                </button>
             </div>
         </div>
 
-        <div class="form-group">
-            <label class="col-md-2 control-label" for="script">Script:</label>
-            <div class="col-md-6">
-                <input type="text" id="script" class="form-control" required>
+        <div id="additional-config" class="collapse">
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="product">Product:</label>
+                <div class="col-md-6">
+                    <select id="product" class="form-control" required>
+                    </select>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label class="col-md-2 control-label" for="openjdk">OpenJDK:</label>
-            <div class="col-md-6">
-                <input type="text" id="openjdk" class="form-control" required>
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="script">Script:</label>
+                <div class="col-md-6">
+                    <input type="text" id="script" class="form-control" required>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <label class="col-md-2 control-label" for="maven">Maven:</label>
-            <div class="col-md-6">
-                <input type="text" id="maven" class="form-control" required>
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="openjdk">OpenJDK:</label>
+                <div class="col-md-6">
+                    <input type="text" id="openjdk" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="maven">Maven:</label>
+                <div class="col-md-6">
+                    <input type="text" id="maven" class="form-control" required>
+                </div>
             </div>
         </div>
 
@@ -91,6 +101,7 @@
 <div class="container" id="build-trigger-result-message"></div>
 
 </body>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/js/patternfly.min.js"></script>
@@ -98,21 +109,21 @@
 
 <script>
 
-    $.fn.sortSelect = function() {
+    $.fn.sortSelect = function () {
         var op = this.children("option");
-        op.sort(function(a, b) {
+        op.sort(function (a, b) {
             return a.text > b.text ? 1 : -1;
         })
         return this.empty().append(op);
     }
 
-    $.fn.changeElementType = function(newType) {
+    $.fn.changeElementType = function (newType) {
         var newElements = [];
 
-        $(this).each(function() {
+        $(this).each(function () {
             var attrs = {};
 
-            $.each(this.attributes, function(idx, attr) {
+            $.each(this.attributes, function (idx, attr) {
                 attrs[attr.nodeName] = attr.nodeValue;
             });
 
@@ -163,6 +174,7 @@
                     }
 
                     $("#product").html(productOptions);
+                    $("#product").sortSelect();
                 }
 
                 $("#openjdk").val(response.environment.openjdk);
