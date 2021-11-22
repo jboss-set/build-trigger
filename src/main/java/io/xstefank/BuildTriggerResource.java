@@ -1,52 +1,21 @@
 package io.xstefank;
 
 import io.quarkus.oidc.IdToken;
-import io.quarkus.qute.CheckedTemplate;
-import io.quarkus.qute.TemplateInstance;
 import io.xstefank.model.json.BuildInfo;
-import io.xstefank.model.json.ProjectInfo;
 import io.xstefank.model.json.TriggerBuildPayload;
-import io.xstefank.pkb.PKBIndexer;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.logging.Logger;
-import org.jboss.resteasy.annotations.jaxrs.PathParam;
-import org.jboss.resteasy.annotations.jaxrs.QueryParam;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Set;
 
 @Path("/")
 public class BuildTriggerResource {
 
     Logger logger = Logger.getLogger(BuildTriggerResource.class);
-
-    @Inject
-    PKBIndexer pkbIndexer;
-
-    @CheckedTemplate
-    public static class Templates {
-        public static native TemplateInstance index(Set<String> projectIds);
-    }
-
-    @GET
-    @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance getIndex() {
-        return Templates.index(pkbIndexer.getProjectIds());
-    }
-
-    @GET
-    @Path("/{id}")
-    public ProjectInfo getProjectInfoFor(@PathParam String id, @QueryParam String stream) {
-        return ProjectInfo.from(pkbIndexer.getProject(id, stream));
-    }
-
 
     @Inject
     BuildTrigger buildTrigger;

@@ -178,7 +178,7 @@
             const selected = $("#project option:selected").text().split(" - ");
             console.log("selected " + selected)
 
-            let get_path = "/" + selected[0];
+            let get_path = "/project/" + selected[0];
 
             if (selected.length > 1) {
                 get_path += "?stream=" + selected[1];
@@ -200,7 +200,7 @@
 
                 if (response.product.length === 0) {
                     $("#product").changeElementType("input");
-                    $("#product").attr("placeholder", " -- please fill in the product in form EAP:8.0.x -- ");
+                    $("#product").attr("placeholder", " -- please fill in the product in form of EAP:8.0.x -- ");
                 } else {
                     $("#product").changeElementType("select");
                     var productOptions = "<option hidden selected> -- select an option -- </option>";
