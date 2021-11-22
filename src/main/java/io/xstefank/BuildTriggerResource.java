@@ -12,7 +12,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
-@Path("/")
+@Path("/build-trigger")
 public class BuildTriggerResource {
 
     Logger logger = Logger.getLogger(BuildTriggerResource.class);

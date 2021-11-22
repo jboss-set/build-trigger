@@ -252,7 +252,7 @@
             title: 'You are about to trigger productization build with the following information:',
             callback: function (result) {
                 if (result) {
-                    const post_url = "/trigger"; //get form action url
+                    const post_url = "/build-trigger/trigger"; //get form action url
                     const request_method = "POST"; //get form GET/POST method
 
                     $.ajax({
