@@ -23,12 +23,21 @@ public class FrontendResource {
     @CheckedTemplate
     public static class Templates {
         public static native TemplateInstance index(Set<String> projectIds);
+
+        public static native TemplateInstance modify(Set<String> projectIds);
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance getIndex() {
         return Templates.index(pkbIndexer.getProjectIds());
+    }
+
+    @GET
+    @Path("/modify")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance getModify() {
+        return Templates.modify(pkbIndexer.getProjectIds());
     }
 
     @GET
