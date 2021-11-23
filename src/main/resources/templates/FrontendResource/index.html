@@ -89,14 +89,6 @@
 
         <div id="additional-config" class="collapse">
 
-
-            <div class="form-group">
-                <label class="col-md-2 control-label" for="script">Script:</label>
-                <div class="col-md-6">
-                    <input type="text" id="script" class="form-control" required>
-                </div>
-            </div>
-
             <div class="form-group">
                 <label class="col-md-2 control-label" for="openjdk">OpenJDK:</label>
                 <div class="col-md-6">
@@ -108,6 +100,14 @@
                 <label class="col-md-2 control-label" for="maven">Maven:</label>
                 <div class="col-md-6">
                     <input type="text" id="maven" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="script">Script:</label>
+                <div class="col-md-6">
+                    <textarea id="script" type="text" class="form-control" rows="1" style="overflow: hidden"
+                              required></textarea>
                 </div>
             </div>
         </div>
@@ -131,6 +131,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
 
 <script>
+
+    $("#additional-config").on("shown.bs.collapse", function () {
+        document.querySelector("#script").style.height = "auto";
+        document.querySelector("#script").style.height = document.querySelector("#script").scrollHeight + "px";
+    });
 
     function getModificationURL() {
         url = "/modify";
@@ -188,7 +193,11 @@
                 $("#upstream").val(response.upstream);
                 $("#version").attr("placeholder", " -- please fill in the version -- ");
                 $("#revision").attr("placeholder", " -- please fill in the commit SHA -- ");
+
                 $("#script").val(response.script);
+                document.querySelector("#script").style.height = "auto";
+                document.querySelector("#script").style.height = document.querySelector("#script").scrollHeight + "px";
+
 
                 console.log(response.product)
 
