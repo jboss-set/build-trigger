@@ -92,14 +92,15 @@
                 <label class="col-md-2 control-label" for="script">Script:</label>
                 <div class="col-md-6">
                     <textarea id="script" type="text" class="form-control" rows="1" style="overflow: hidden"
-                              required></textarea>
+                              required>
+                    </textarea>
                 </div>
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-10 col-md-offset-2">
-                <button id="build-button" type="submit" class="btn btn-primary">Trigger build</button>
+                <button id="build-button" type="submit" class="btn btn-primary">Modify build</button>
             </div>
         </div>
     </form>
@@ -243,7 +244,7 @@
         event.preventDefault();
 
         bootbox.confirm({
-            title: 'You are about to trigger productization build with the following information:',
+            title: 'You are about to modify productization build with the following information:',
             callback: function (result) {
                 if (result) {
                     const post_url = "/build-trigger/trigger"; //get form action url
