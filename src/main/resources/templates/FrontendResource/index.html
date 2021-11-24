@@ -12,21 +12,9 @@
 
 <body>
 
-<nav class="navbar navbar-inverse">
-    <div class="container-fluid">
+<div id="navbar-placeholder">
 
-        <!-- Brand/logo -->
-        <div class="navbar-header">
-            <a class="navbar-brand" href="/"><img src="/Logo-RedHat-Hat-Color-RGB.png" style="max-height: 100%"></a>
-        </div>
-
-        <ul class="nav navbar-nav">
-            <li class="active"><a href="/">Component build<span class="sr-only">(current)</span></a></li>
-            <li><a id="modificiation-navbar" href="#" onclick="getModificationURL()">Build modifications</a></li>
-        </ul>
-
-    </div>
-</nav>
+</div>
 
 <div class="container">
 
@@ -128,6 +116,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
 
 <script>
+
+    $(function () {
+        $("#navbar-placeholder").load("navbar.html", function () {
+            jQuery("#trigger-build-navbar-option").addClass("active");
+        });
+    });
 
     $("#additional-config").on("shown.bs.collapse", function () {
         document.querySelector("#script").style.height = "auto";
