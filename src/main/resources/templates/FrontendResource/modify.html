@@ -42,21 +42,6 @@
         </div>
 
         <div class="form-group">
-            <label class="col-md-2 control-label" for="version">Version:</label>
-            <div class="col-md-6">
-                <input type="text" id="version" class="form-control" required>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-md-2 control-label" for="revision">Revision:</label>
-            <div class="col-md-6">
-                <input type="text" id="revision" class="form-control" required>
-            </div>
-        </div>
-
-
-        <div class="form-group">
             <label class="col-md-2 control-label" for="product">Product:</label>
             <div class="col-md-6">
                 <select id="product" class="form-control" required>
@@ -183,8 +168,6 @@
             }).done(function (response) {
                 $("#project").val(response.project);
                 $("#upstream").val(response.upstream);
-                $("#version").attr("placeholder", " -- please fill in the version -- ");
-                $("#revision").attr("placeholder", " -- please fill in the commit SHA -- ");
 
                 $("#script").val(response.script);
                 document.querySelector("#script").style.height = "auto";
@@ -233,8 +216,6 @@
 
         const buildInfo = {
             upstream: $("#upstream").val(),
-            version: $("#version").val(),
-            revision: $("#revision").val(),
             script: $("#script").val(),
             product: product,
             environment: environment
@@ -247,11 +228,11 @@
             title: 'You are about to modify productization build with the following information:',
             callback: function (result) {
                 if (result) {
-                    const post_url = "/build-trigger/trigger"; //get form action url
-                    const request_method = "POST"; //get form GET/POST method
+                    const put_url = "/build-trigger/modify"; //get form action url
+                    const request_method = "PUT"; //get form GET/POST method
 
                     $.ajax({
-                        url: post_url,
+                        url: put_url,
                         type: request_method,
                         data: JSON.stringify(buildInfo),
                         contentType: 'application/json',
@@ -269,8 +250,6 @@
             message: '<div>' +
                 '<p><b>Project: </b>' + $("#project").val() + '</p>' +
                 '<p><b>Upstream: </b>' + buildInfo.upstream + '</p>' +
-                '<p><b>Version: </b>' + buildInfo.version + '</p>' +
-                '<p><b>Revision: </b>' + buildInfo.revision + '</p>' +
                 '<p><b>Product name: </b>' + buildInfo.product.name + '</p>' +
                 '<p><b>Product version: </b>' + buildInfo.product.version + '</p>' +
                 '<p><b>Script: </b>' + buildInfo.script + '</p>' +
