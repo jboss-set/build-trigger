@@ -5,6 +5,7 @@ import java.util.List;
 public class BuildJMSModifyPayload {
 
     public String email;
+    public String project;
     public List<String> product;
     public Environment environment;
     public String upstream;
@@ -14,6 +15,7 @@ public class BuildJMSModifyPayload {
         BuildJMSModifyPayload buildJMSModifyPayload = new BuildJMSModifyPayload();
 
         buildJMSModifyPayload.email = email;
+        buildJMSModifyPayload.project = buildModifyInfo.project;
         buildJMSModifyPayload.product = buildModifyInfo.product;
         buildJMSModifyPayload.environment = buildModifyInfo.environment;
         buildJMSModifyPayload.upstream = buildModifyInfo.upstream;
@@ -26,6 +28,7 @@ public class BuildJMSModifyPayload {
     public String toString() {
         return "BuildJMSModifyPayload{" +
             "email='" + email + '\'' +
+            ", project='" + project + '\'' +
             ", product=" + product +
             ", environment=" + environment +
             ", upstream='" + upstream + '\'' +
