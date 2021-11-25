@@ -44,42 +44,39 @@
         <div class="form-group">
             <label class="col-md-2 control-label" for="product">Product:</label>
             <div class="col-md-6">
-                <select id="product" class="form-control" required>
-                </select>
+                <div class="input-group col-md-6">
+                    <input id="product-list-add-text" type="text" class="form-control"
+                           placeholder="add an item in form of EAP:8.0.x...">
+                    <div class="input-group-addon" style="background-color: transparent; border: 0">
+                        <button id="add-product-button" class="btn btn-xs" style="outline: none" type="button">Add
+                        </button>
+                    </div>
+                </div>
+                <ul id="product-list-group" class="list-group">
+                </ul>
             </div>
         </div>
 
         <div class="form-group">
-            <div class="col-md-10 col-md-offset-2">
-                <button data-toggle="collapse" data-target="#additional-config" class="btn btn-secondary "
-                        type="button" style="outline: none">Additional configurations
-                </button>
+            <label class="col-md-2 control-label" for="openjdk">OpenJDK:</label>
+            <div class="col-md-6">
+                <input type="text" id="openjdk" class="form-control" required>
             </div>
         </div>
 
-        <div id="additional-config" class="collapse">
-
-            <div class="form-group">
-                <label class="col-md-2 control-label" for="openjdk">OpenJDK:</label>
-                <div class="col-md-6">
-                    <input type="text" id="openjdk" class="form-control" required>
-                </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="maven">Maven:</label>
+            <div class="col-md-6">
+                <input type="text" id="maven" class="form-control" required>
             </div>
+        </div>
 
-            <div class="form-group">
-                <label class="col-md-2 control-label" for="maven">Maven:</label>
-                <div class="col-md-6">
-                    <input type="text" id="maven" class="form-control" required>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-md-2 control-label" for="script">Script:</label>
-                <div class="col-md-6">
+        <div class="form-group">
+            <label class="col-md-2 control-label" for="script">Script:</label>
+            <div class="col-md-6">
                     <textarea id="script" type="text" class="form-control" rows="1" style="overflow: hidden"
                               required>
                     </textarea>
-                </div>
             </div>
         </div>
 
@@ -120,6 +117,23 @@
         return true;
     }
 
+    function appendProductLI(name) {
+        var li = document.createElement("li");
+        li.className = "list-group-item d-flex";
+        var span = document.createElement("span");
+        span.textContent = name;
+        var button = document.createElement("button");
+        button.className = "btn btn-xs btn-danger btn-secondary product-list-delete-button";
+        button.id = "product-list-delete-button-" + name;
+        button.type = "button";
+        button.textContent = "-";
+        button.style = "margin-left: 2%; outline: none";
+
+        li.append(span, button);
+
+        $("#product-list-group").append(li);
+    }
+
     $.fn.sortSelect = function () {
         var op = this.children("option");
         op.sort(function (a, b) {
@@ -148,6 +162,22 @@
         return $(newElements);
     };
 
+    $("#add-product-button").click(function () {
+        const input = $("#product-list-add-text").val();
+
+        const split = input.split(":");
+        if (split.length !== 2) {
+            alert("Input '" + input + "' is not in form of EAP:8.0.x");
+            return;
+        }
+
+        appendProductLI(input);
+    });
+
+    $(document).on("click", ".product-list-delete-button", function () {
+        $(this).parent().remove();
+    });
+
     $("#project").sortSelect();
 
     $("#project").click(function () {
@@ -173,22 +203,8 @@
                 document.querySelector("#script").style.height = "auto";
                 document.querySelector("#script").style.height = document.querySelector("#script").scrollHeight + "px";
 
-
-                console.log(response.product)
-
-                if (response.product.length === 0) {
-                    $("#product").changeElementType("input");
-                    $("#product").attr("placeholder", " -- please fill in the product in form of EAP:8.0.x -- ");
-                } else {
-                    $("#product").changeElementType("select");
-                    var productOptions = "<option hidden selected> -- select an option -- </option>";
-                    for (var i = 0; i < response.product.length; i++) {
-                        productOptions += "<option value=\"" + response.product[i] + "\">" + response.product[i] + "</option>";
-                    }
-
-                    $("#product").html(productOptions);
-                    $("#product").sortSelect();
-                }
+                $("#product-list-group").empty();
+                response.product.sort().forEach(id => appendProductLI(id));
 
                 $("#openjdk").val(response.environment.openjdk);
                 $("#maven").val(response.environment.maven);
@@ -202,12 +218,6 @@
     )
 
     $("#buildForm").submit(function (event) {
-        const productSplit = $("#product").val().split(":")
-
-        const product = {
-            name: productSplit[0],
-            version: productSplit[1]
-        };
 
         const environment = {
             openjdk: $("#openjdk").val().split(',').map(s => s.trim()),
@@ -215,9 +225,10 @@
         }
 
         const buildInfo = {
+            project: $("#project").val(),
             upstream: $("#upstream").val(),
             script: $("#script").val(),
-            product: product,
+            product: $.map($("#product-list-group").children().children("span"), el => el.textContent),
             environment: environment
         }
         console.log("BuildInfo: " + JSON.stringify(buildInfo));
@@ -250,8 +261,7 @@
             message: '<div>' +
                 '<p><b>Project: </b>' + $("#project").val() + '</p>' +
                 '<p><b>Upstream: </b>' + buildInfo.upstream + '</p>' +
-                '<p><b>Product name: </b>' + buildInfo.product.name + '</p>' +
-                '<p><b>Product version: </b>' + buildInfo.product.version + '</p>' +
+                '<p><b>Product: </b>' + $.map($("#product-list-group").children().children("span"), el => el.textContent).join(', ') + '</p>' +
                 '<p><b>Script: </b>' + buildInfo.script + '</p>' +
                 '<p><b>OpenJDK: </b>' + buildInfo.environment.openjdk.join(', ') + '</p>' +
                 '<p><b>Maven: </b>' + buildInfo.environment.maven.join(', ') + '</p>' +

@@ -3,7 +3,8 @@ package io.xstefank;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.xstefank.client.PKBClient;
-import io.xstefank.model.json.BuildJMSPayload;
+import io.xstefank.model.json.BuildJMSModifyPayload;
+import io.xstefank.model.json.BuildJMSTriggerPayload;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -31,19 +32,20 @@ public class BuildTrigger {
     @RestClient
     PKBClient pkbClient;
 
-    public void triggerBuild(BuildJMSPayload payloadMessage) {
+    public void triggerBuild(BuildJMSTriggerPayload payloadMessage) {
         sendJMS(triggerTopic, payloadMessage);
     }
 
-    public void modifyBuild(BuildJMSPayload payloadMessage) {
+    public void modifyBuild(BuildJMSModifyPayload payloadMessage) {
         sendJMS(modifyTopic, payloadMessage);
     }
 
-    private void sendJMS(String topic, BuildJMSPayload payloadMessage) {
-        try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
-            context.createProducer().send(context.createTopic(topic), objectMapper.writeValueAsString(payloadMessage));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+    private void sendJMS(String topic, Object payload) {
+        System.out.println(topic + payload);
+//        try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
+//            context.createProducer().send(context.createTopic(topic), objectMapper.writeValueAsString(payload));
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 }

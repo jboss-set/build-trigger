@@ -1,25 +1,23 @@
 package io.xstefank.model.json;
 
-public class BuildInfo {
+import java.util.List;
+
+public class BuildModifyInfo {
 
     public String project;
-    public Product product;
+    public List<String> product;
     public Environment environment;
     public String upstream;
-    public String revision;
     public String script;
-    public String version;
 
     @Override
     public String toString() {
-        return "BuildInfo{" +
+        return "BuildModifyInfo{" +
             "project='" + project + '\'' +
             ", product=" + product +
             ", environment=" + environment +
             ", upstream='" + upstream + '\'' +
-            ", revision='" + revision + '\'' +
             ", script='" + script + '\'' +
-            ", version='" + version + '\'' +
             '}';
     }
 }
