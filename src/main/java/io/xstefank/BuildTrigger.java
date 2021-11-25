@@ -41,11 +41,10 @@ public class BuildTrigger {
     }
 
     private void sendJMS(String topic, Object payload) {
-        System.out.println(topic + payload);
-//        try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
-//            context.createProducer().send(context.createTopic(topic), objectMapper.writeValueAsString(payload));
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e);
-//        }
+        try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
+            context.createProducer().send(context.createTopic(topic), objectMapper.writeValueAsString(payload));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

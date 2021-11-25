@@ -44,9 +44,9 @@
         <div class="form-group">
             <label class="col-md-2 control-label" for="product">Product:</label>
             <div class="col-md-6">
-                <div class="input-group col-md-6">
+                <div id="product" class="input-group col-md-6">
                     <input id="product-list-add-text" type="text" class="form-control"
-                           placeholder="add an item in form of EAP:8.0.x...">
+                           placeholder="add an item (EAP:8.0.x, EAP-XP:4.0.x)...">
                     <div class="input-group-addon" style="background-color: transparent; border: 0">
                         <button id="add-product-button" class="btn btn-xs" style="outline: none" type="button">Add
                         </button>
@@ -60,14 +60,32 @@
         <div class="form-group">
             <label class="col-md-2 control-label" for="openjdk">OpenJDK:</label>
             <div class="col-md-6">
-                <input type="text" id="openjdk" class="form-control" required>
+                <div id="openjdk" class="input-group col-md-6">
+                    <input id="openjdk-list-add-text" type="text" class="form-control"
+                           placeholder="add an item (8, 11, 17)...">
+                    <div class="input-group-addon" style="background-color: transparent; border: 0">
+                        <button id="add-openjdk-button" class="btn btn-xs" style="outline: none" type="button">Add
+                        </button>
+                    </div>
+                </div>
+                <ul id="openjdk-list-group" class="list-group">
+                </ul>
             </div>
         </div>
 
         <div class="form-group">
             <label class="col-md-2 control-label" for="maven">Maven:</label>
             <div class="col-md-6">
-                <input type="text" id="maven" class="form-control" required>
+                <div class="input-group col-md-6">
+                    <input id="maven-list-add-text" type="text" class="form-control"
+                           placeholder="add an item (3.3.9, 3.8.1)...">
+                    <div class="input-group-addon" style="background-color: transparent; border: 0">
+                        <button id="add-maven-button" class="btn btn-xs" style="outline: none" type="button">Add
+                        </button>
+                    </div>
+                </div>
+                <ul id="maven-list-group" class="list-group">
+                </ul>
             </div>
         </div>
 
@@ -117,21 +135,21 @@
         return true;
     }
 
-    function appendProductLI(name) {
+    function appendLI(name, type) {
         var li = document.createElement("li");
         li.className = "list-group-item d-flex";
         var span = document.createElement("span");
         span.textContent = name;
         var button = document.createElement("button");
-        button.className = "btn btn-xs btn-danger btn-secondary product-list-delete-button";
-        button.id = "product-list-delete-button-" + name;
+        button.className = "btn btn-xs btn-danger btn-secondary " + type + "-list-delete-button";
+        button.id = type + "-list-delete-button-" + name;
         button.type = "button";
         button.textContent = "-";
         button.style = "margin-left: 2%; outline: none";
 
         li.append(span, button);
 
-        $("#product-list-group").append(li);
+        $("#" + type + "-list-group").append(li);
     }
 
     $.fn.sortSelect = function () {
@@ -171,10 +189,28 @@
             return;
         }
 
-        appendProductLI(input);
+        appendLI(input, "product");
+    });
+
+    $("#add-openjdk-button").click(function () {
+        const input = $("#openjdk-list-add-text").val();
+        appendLI(input, "openjdk");
+    });
+
+    $("#add-maven-button").click(function () {
+        const input = $("#maven-list-add-text").val();
+        appendLI(input, "maven");
     });
 
     $(document).on("click", ".product-list-delete-button", function () {
+        $(this).parent().remove();
+    });
+
+    $(document).on("click", ".openjdk-list-delete-button", function () {
+        $(this).parent().remove();
+    });
+
+    $(document).on("click", ".maven-list-delete-button", function () {
         $(this).parent().remove();
     });
 
@@ -204,10 +240,14 @@
                 document.querySelector("#script").style.height = document.querySelector("#script").scrollHeight + "px";
 
                 $("#product-list-group").empty();
-                response.product.sort().forEach(id => appendProductLI(id));
+                response.product.sort().forEach(id => appendLI(id, "product"));
 
-                $("#openjdk").val(response.environment.openjdk);
-                $("#maven").val(response.environment.maven);
+                $("#openjdk-list-group").empty();
+                response.environment.openjdk.sort().forEach(id => appendLI(id, "openjdk"));
+
+                $("#maven-list-group").empty();
+                response.environment.maven.sort().forEach(id => appendLI(id, "maven"));
+
             }).fail(function (err) {
                 $("#build-trigger-result-message").append("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span class='pficon pficon-close'></span></button><span class='pficon pficon-error-circle-o'></span><strong>Error </strong>" + err.responseText + "</div>");
                 $("#build-button").removeClass("disabled").removeAttr("disabled");
@@ -220,15 +260,15 @@
     $("#buildForm").submit(function (event) {
 
         const environment = {
-            openjdk: $("#openjdk").val().split(',').map(s => s.trim()),
-            maven: $("#maven").val().split(',').map(s => s.trim())
+            openjdk: $.map($("#openjdk-list-group").children().children("span"), el => el.textContent).sort(),
+            maven: $.map($("#maven-list-group").children().children("span"), el => el.textContent).sort()
         }
 
         const buildInfo = {
             project: $("#project").val(),
             upstream: $("#upstream").val(),
             script: $("#script").val(),
-            product: $.map($("#product-list-group").children().children("span"), el => el.textContent),
+            product: $.map($("#product-list-group").children().children("span"), el => el.textContent).sort(),
             environment: environment
         }
         console.log("BuildInfo: " + JSON.stringify(buildInfo));
@@ -261,7 +301,7 @@
             message: '<div>' +
                 '<p><b>Project: </b>' + $("#project").val() + '</p>' +
                 '<p><b>Upstream: </b>' + buildInfo.upstream + '</p>' +
-                '<p><b>Product: </b>' + $.map($("#product-list-group").children().children("span"), el => el.textContent).join(', ') + '</p>' +
+                '<p><b>Product: </b>' + buildInfo.product.join(', ') + '</p>' +
                 '<p><b>Script: </b>' + buildInfo.script + '</p>' +
                 '<p><b>OpenJDK: </b>' + buildInfo.environment.openjdk.join(', ') + '</p>' +
                 '<p><b>Maven: </b>' + buildInfo.environment.maven.join(', ') + '</p>' +
