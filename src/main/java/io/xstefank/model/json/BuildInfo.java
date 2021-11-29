@@ -1,9 +1,11 @@
 package io.xstefank.model.json;
 
+import java.util.List;
+
 public class BuildInfo {
 
     public String project;
-    public Product product;
+    public List<String> product;
     public Environment environment;
     public String upstream;
     public String revision;

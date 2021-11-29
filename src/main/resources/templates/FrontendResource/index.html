@@ -307,8 +307,7 @@
                 '<p><b>Upstream: </b>' + buildInfo.upstream + '</p>' +
                 '<p><b>Version: </b>' + buildInfo.version + '</p>' +
                 '<p><b>Revision: </b>' + buildInfo.revision + '</p>' +
-                '<p><b>Product name: </b>' + buildInfo.product.name + '</p>' +
-                '<p><b>Product version: </b>' + buildInfo.product.version + '</p>' +
+                '<p><b>Product: </b>' + buildInfo.product.join(', ') + '</p>' +
                 '<p><b>Script: </b>' + buildInfo.script + '</p>' +
                 '<p><b>OpenJDK: </b>' + buildInfo.environment.openjdk.join(', ') + '</p>' +
                 '<p><b>Maven: </b>' + buildInfo.environment.maven.join(', ') + '</p>' +
