@@ -212,11 +212,13 @@
                     $("#product-list-group").attr("class", "form-control");
                     $("#product-list-group").attr("type", "text")
                     $("#product-list-group").attr("placeholder", " -- please fill in the product (EAP:8.0.x, EAP-XP:4.0.x) -- ");
+                    $("#product-list-group").attr("required", "true");
                 } else {
                     $("#product-list-group").changeElementType("ul");
                     $("#product-list-group").attr("class", "list-group checkbox-list-group");
                     $("#product-list-group").removeAttr("type");
                     $("#product-list-group").removeAttr("placeholder");
+                    $("#product-list-group").removeAttr("required");
                     $("#product-list-group").empty();
                     response.product.sort().forEach(id => appendCheckBoxLI(id, "product"));
                 }
@@ -249,12 +251,15 @@
         for (let i = 0; i < product.length; i++) {
             const split = product[i].split(":");
             if (split.length !== 2) {
-                alert("Input '" + product[i] + "' is not in form of EAP:8.0.x");
+                bootbox.alert("Input '" + product[i] + "' is not in form of EAP:8.0.x");
                 return false;
             }
         };
 
-        console.log(product);
+        if (product.length === 0) {
+            bootbox.alert("No product was specified. At least one product is required.");
+            return false;
+        }
 
         const environment = {
             openjdk: $("#openjdk").val().split(',').map(s => s.trim()),
