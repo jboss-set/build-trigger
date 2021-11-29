@@ -246,6 +246,14 @@
             product = $("#product-list-group").val().split(',').map(s => s.trim());
         }
 
+        for (let i = 0; i < product.length; i++) {
+            const split = product[i].split(":");
+            if (split.length !== 2) {
+                alert("Input '" + product[i] + "' is not in form of EAP:8.0.x");
+                return false;
+            }
+        };
+
         console.log(product);
 
         const environment = {
