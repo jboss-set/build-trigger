@@ -211,7 +211,7 @@
                     $("#product-list-group").changeElementType("input");
                     $("#product-list-group").attr("class", "form-control");
                     $("#product-list-group").attr("type", "text")
-                    $("#product-list-group").attr("placeholder", " -- please fill in the product (EAP:8.0.x) -- ");
+                    $("#product-list-group").attr("placeholder", " -- please fill in the product (EAP:8.0.x, EAP-XP:4.0.x) -- ");
                 } else {
                     $("#product-list-group").changeElementType("ul");
                     $("#product-list-group").attr("class", "list-group checkbox-list-group");
@@ -233,8 +233,6 @@
     )
 
     $("#buildForm").submit(function (event) {
-
-        // const productSplit = $("#product").val().split(":")
 
         let product = [];
 
