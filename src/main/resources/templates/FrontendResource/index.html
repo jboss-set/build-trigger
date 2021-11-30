@@ -76,14 +76,16 @@
             <div class="form-group">
                 <label class="col-md-2 control-label" for="openjdk">OpenJDK:</label>
                 <div class="col-md-6">
-                    <input type="text" id="openjdk" class="form-control" required>
+                    <ul id="openjdk-list-group" class="list-group checkbox-list-group">
+                    </ul>
                 </div>
             </div>
 
             <div class="form-group">
                 <label class="col-md-2 control-label" for="maven">Maven:</label>
                 <div class="col-md-6">
-                    <input type="text" id="maven" class="form-control" required>
+                    <ul id="maven-list-group" class="list-group checkbox-list-group">
+                    </ul>
                 </div>
             </div>
 
@@ -145,6 +147,16 @@
         $("#" + type + "-list-group").append(li);
     }
 
+    function getChecked(type) {
+        const result = [];
+        $("#" + type + "-list-group").children().children("input").each(function (index) {
+            if ($(this).is(":checked")) {
+                result.push($(this).parent().children("span").text());
+            }
+        });
+
+        return result;
+    }
 
     $.fn.sortSelect = function () {
         var op = this.children("option");
@@ -199,9 +211,6 @@
                 document.querySelector("#script").style.height = "auto";
                 document.querySelector("#script").style.height = document.querySelector("#script").scrollHeight + "px";
 
-
-                console.log(response.product);
-
                 if (response.product.length === 0) {
                     $("#product-list-group").changeElementType("input");
                     $("#product-list-group").attr("class", "form-control");
@@ -218,8 +227,10 @@
                     response.product.sort().forEach(id => appendCheckBoxLI(id, "product"));
                 }
 
-                $("#openjdk").val(response.environment.openjdk);
-                $("#maven").val(response.environment.maven);
+                $("#openjdk-list-group").empty();
+                response.environment.openjdk.sort().forEach(id => appendCheckBoxLI(id, "openjdk"));
+                $("#maven-list-group").empty();
+                response.environment.maven.sort().forEach(id => appendCheckBoxLI(id, "maven"));
             }).fail(function (err) {
                 $("#build-trigger-result-message").append("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span class='pficon pficon-close'></span></button><span class='pficon pficon-error-circle-o'></span><strong>Error </strong>" + err.responseText + "</div>");
                 $("#build-button").removeClass("disabled").removeAttr("disabled");
@@ -234,11 +245,7 @@
         let product = [];
 
         if ($("#product-list-group").is("ul")) {
-            $("#product-list-group").children().children("input").each(function (index) {
-                if ($(this).is(":checked")) {
-                    product.push($(this).parent().children("span").text());
-                }
-            });
+            product = getChecked("product");
         } else {
             product = $("#product-list-group").val().split(',').map(s => s.trim());
         }
@@ -256,9 +263,23 @@
             return false;
         }
 
+        const openjdk = getChecked("openjdk");
+
+        if (openjdk.length === 0) {
+            bootbox.alert("No OpenJDK was specified. At least one OpenJDK is required.");
+            return false;
+        }
+
+        const maven = getChecked("maven");
+
+        if (maven.length === 0) {
+            bootbox.alert("No Maven was specified. At least one Maven is required.");
+            return false;
+        }
+
         const environment = {
-            openjdk: $("#openjdk").val().split(',').map(s => s.trim()),
-            maven: $("#maven").val().split(',').map(s => s.trim())
+            openjdk: openjdk,
+            maven: maven
         }
 
         const buildInfo = {
