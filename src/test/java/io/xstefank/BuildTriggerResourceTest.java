@@ -11,6 +11,7 @@ import io.quarkus.test.security.oidc.OidcSecurity;
 import io.quarkus.test.security.oidc.UserInfo;
 import io.xstefank.client.PKBClient;
 import io.xstefank.model.json.BuildInfo;
+import io.xstefank.model.json.BuildModifyInfo;
 import io.xstefank.model.json.Environment;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Assertions;
@@ -51,7 +52,7 @@ public class BuildTriggerResourceTest {
     @OidcSecurity(claims = {
         @Claim(key = "email", value = USER_EMAIL)
     })
-    public void testHelloEndpoint() throws Exception {
+    public void testTriggerEndpoint() throws Exception {
         Mockito.when(pkbClient.getProjects()).thenReturn(List.of());
 
         BuildInfo buildInfo = createTestBuildInfo();
@@ -79,6 +80,37 @@ public class BuildTriggerResourceTest {
             }));
     }
 
+    @Test
+    @TestSecurity(user = "user", roles = "user")
+    @OidcSecurity(claims = {
+        @Claim(key = "email", value = USER_EMAIL)
+    })
+    public void testModifyEndpoint() throws Exception {
+        Mockito.when(pkbClient.getProjects()).thenReturn(List.of());
+
+        BuildModifyInfo buildModifyInfo = createTestBuildModifyInfo();
+
+        given()
+            .body(objectMapper.writeValueAsString(buildModifyInfo))
+            .contentType(MediaType.APPLICATION_JSON)
+            .when().put("/build-trigger/modify")
+            .then()
+            .statusCode(200)
+            .body(is("Triggered build modification for " + BUILD_INFO_PROJECT));
+
+        Mockito.verify(buildTrigger, Mockito.times(1))
+            .modifyBuild(Mockito.argThat(x -> {
+                assertEquals(USER_EMAIL, x.email);
+                assertEquals(BUILD_INFO_PROJECT, x.project);
+                assertEquals(BUILD_INFO_UPSTREAM, x.upstream);
+                assertEquals(BUILD_INFO_PRODUCT, x.product);
+                assertEquals(BUILD_INFO_ENVIRONMENT_OPENJDK, x.environment.openjdk);
+                assertEquals(BUILD_INFO_ENVIRONMENT_MAVEN, x.environment.maven);
+                assertEquals(BUILD_INFO_SCRIPT, x.script);
+                return true;
+            }));
+    }
+
     private BuildInfo createTestBuildInfo() {
         BuildInfo buildInfo = new BuildInfo();
         buildInfo.project = BUILD_INFO_PROJECT;
@@ -92,5 +124,18 @@ public class BuildTriggerResourceTest {
         buildInfo.environment.maven = BUILD_INFO_ENVIRONMENT_MAVEN;
 
         return buildInfo;
+    }
+
+    private BuildModifyInfo createTestBuildModifyInfo() {
+        BuildModifyInfo buildModifyInfo = new BuildModifyInfo();
+        buildModifyInfo.project = BUILD_INFO_PROJECT;
+        buildModifyInfo.upstream = BUILD_INFO_UPSTREAM;
+        buildModifyInfo.product = BUILD_INFO_PRODUCT;
+        buildModifyInfo.script = BUILD_INFO_SCRIPT;
+        buildModifyInfo.environment = new Environment();
+        buildModifyInfo.environment.openjdk = BUILD_INFO_ENVIRONMENT_OPENJDK;
+        buildModifyInfo.environment.maven = BUILD_INFO_ENVIRONMENT_MAVEN;
+
+        return buildModifyInfo;
     }
 }
