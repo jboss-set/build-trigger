@@ -82,7 +82,7 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-test-security</artifactId>
+      <artifactId>quarkus-test-security-oidc</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
