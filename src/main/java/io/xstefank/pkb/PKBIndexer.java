@@ -1,5 +1,6 @@
 package io.xstefank.pkb;
 
+import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.StartupEvent;
 import io.xstefank.client.PKBClient;
 import io.xstefank.pkb.model.json.Project;
@@ -9,7 +10,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,10 +30,12 @@ public class PKBIndexer {
     void onStart(@Observes StartupEvent event) {
         projects = new HashMap<>();
 
-        pkbClient.getProjects().forEach(project -> {
-            projects.computeIfAbsent(project.project, s -> new ArrayList<>());
-            projects.get(project.project).add(project);
-        });
+        if (!LaunchMode.current().equals(LaunchMode.TEST)) {
+            pkbClient.getProjects().forEach(project -> {
+                projects.computeIfAbsent(project.project, s -> new ArrayList<>());
+                projects.get(project.project).add(project);
+            });
+        }
     }
 
     public Set<String> getProjectIds() {

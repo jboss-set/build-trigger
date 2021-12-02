@@ -15,6 +15,7 @@ import io.xstefank.model.json.BuildModifyInfo;
 import io.xstefank.model.json.Environment;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -109,6 +110,24 @@ public class BuildTriggerResourceTest {
                 assertEquals(BUILD_INFO_SCRIPT, x.script);
                 return true;
             }));
+    }
+
+    @Test
+    @Disabled("how to specify not logged user")
+    @TestSecurity(user = "user", roles = "user")
+    public void testTriggerEndpointNoAuth() throws Exception {
+        Mockito.when(pkbClient.getProjects()).thenReturn(List.of());
+
+        BuildInfo buildInfo = createTestBuildInfo();
+
+        given()
+            .header("Authorization", "")
+            .body(objectMapper.writeValueAsString(buildInfo))
+            .contentType(MediaType.APPLICATION_JSON)
+            .when().post("/build-trigger/trigger")
+            .then()
+            .log().all()
+            .statusCode(403);
     }
 
     private BuildInfo createTestBuildInfo() {
