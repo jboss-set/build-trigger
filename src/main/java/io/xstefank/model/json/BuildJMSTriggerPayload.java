@@ -1,12 +1,9 @@
 package io.xstefank.model.json;
 
-import java.util.List;
-
 public class BuildJMSTriggerPayload {
 
     public String email;
     public String project;
-    public List<String> product;
     public Environment environment;
     public String upstream;
     public String revision;
@@ -18,7 +15,6 @@ public class BuildJMSTriggerPayload {
 
         createBuildPayload.email = email;
         createBuildPayload.project = buildInfo.project;
-        createBuildPayload.product = buildInfo.product;
         createBuildPayload.environment = buildInfo.environment;
         createBuildPayload.upstream = buildInfo.upstream;
         createBuildPayload.revision = buildInfo.revision;
@@ -33,7 +29,6 @@ public class BuildJMSTriggerPayload {
         return "BuildJMSTriggerPayload{" +
             "email='" + email + '\'' +
             ", project='" + project + '\'' +
-            ", product=" + product +
             ", environment=" + environment +
             ", upstream='" + upstream + '\'' +
             ", revision='" + revision + '\'' +

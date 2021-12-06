@@ -9,7 +9,6 @@ import java.util.List;
 public class ProjectInfo {
 
     public String project;
-    public List<String> product;
     public Environment environment;
     public String upstream;
     public String revision;
@@ -22,7 +21,6 @@ public class ProjectInfo {
         buildInfo.project = project.project + (project.stream.isBlank() ? "" : " - " + project.stream);
         buildInfo.upstream = project.buildConfiguration.source.scmUrl;
         buildInfo.script = project.buildConfiguration.script;
-        buildInfo.product = project.products;
         buildInfo.environment = new Environment();
         buildInfo.environment.openjdk = parseList(project.buildConfiguration.environmentSpec.tools.openjdk);
         buildInfo.environment.maven = parseList(project.buildConfiguration.environmentSpec.tools.maven);
@@ -46,7 +44,6 @@ public class ProjectInfo {
     public String toString() {
         return "ProjectInfo{" +
             "project='" + project + '\'' +
-            ", product=" + product +
             ", environment=" + environment +
             ", upstream='" + upstream + '\'' +
             ", revision='" + revision + '\'' +
