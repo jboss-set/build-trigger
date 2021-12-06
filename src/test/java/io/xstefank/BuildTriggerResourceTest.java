@@ -1,9 +1,11 @@
 package io.xstefank;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.security.runtime.AnonymousIdentityProvider;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import io.quarkus.test.junit.mockito.InjectSpy;
+import io.quarkus.test.security.TestIdentityAssociation;
 import io.quarkus.test.security.TestSecurity;
 import io.quarkus.test.security.oidc.Claim;
 import io.quarkus.test.security.oidc.ConfigMetadata;
@@ -19,6 +21,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import javax.enterprise.inject.spi.CDI;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -113,8 +116,8 @@ public class BuildTriggerResourceTest {
     }
 
     @Test
-    @Disabled("how to specify not logged user")
-    @TestSecurity(user = "user", roles = "user")
+    @Disabled("Anonymous identity doesn't work in tests.")
+    @TestSecurity
     public void testTriggerEndpointNoAuth() throws Exception {
         Mockito.when(pkbClient.getProjects()).thenReturn(List.of());
 
