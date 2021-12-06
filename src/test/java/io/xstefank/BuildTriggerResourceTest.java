@@ -116,7 +116,7 @@ public class BuildTriggerResourceTest {
     }
 
     @Test
-    @Disabled("Anonymous identity doesn't work in tests.")
+    @Disabled("Anonymous identity doesn't work in tests. (https://github.com/quarkusio/quarkus/issues/21888)")
     @TestSecurity
     public void testTriggerEndpointNoAuth() throws Exception {
         Mockito.when(pkbClient.getProjects()).thenReturn(List.of());
