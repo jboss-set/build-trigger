@@ -22,26 +22,40 @@ public class FrontendResource {
 
     @CheckedTemplate
     public static class Templates {
-        public static native TemplateInstance index(Set<String> projectIds);
+        public static native TemplateInstance index(Set<String> projectIds, String project);
 
-        public static native TemplateInstance modify(Set<String> projectIds);
+        public static native TemplateInstance modify(Set<String> projectIds, String project);
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance getIndex() {
-        return Templates.index(pkbIndexer.getProjectIds());
+        return Templates.index(pkbIndexer.getProjectIds(), null);
     }
 
     @GET
-    @Path("/modify")
+    @Path("{project}")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance getIndexWithProject(@PathParam String project) {
+        return Templates.index(pkbIndexer.getProjectIds(), project);
+    }
+
+    @GET
+    @Path("modify")
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance getModify() {
-        return Templates.modify(pkbIndexer.getProjectIds());
+        return Templates.modify(pkbIndexer.getProjectIds(), null);
     }
 
     @GET
-    @Path("/project/{id}")
+    @Path("modify/{project}")
+    @Produces(MediaType.TEXT_HTML)
+    public TemplateInstance getModifyWithProjecyt(@PathParam String project) {
+        return Templates.modify(pkbIndexer.getProjectIds(), project);
+    }
+
+    @GET
+    @Path("project/{id}")
     public ProjectInfo getProjectInfoFor(@PathParam String id, @QueryParam String stream) {
         return ProjectInfo.from(pkbIndexer.getProject(id, stream));
     }

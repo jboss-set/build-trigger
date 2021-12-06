@@ -119,9 +119,13 @@
 <script>
 
     $(function () {
-        $("#navbar-placeholder").load("page-components/navbar.html", function () {
+        $("#navbar-placeholder").load("/page-components/navbar.html", function () {
             jQuery("#modify-build-navbar-option").addClass("active");
         });
+
+        {#if project}
+        $("#project").val("{project}").click();
+        {/if}
     })
 
     $("#additional-config").on("shown.bs.collapse", function () {
