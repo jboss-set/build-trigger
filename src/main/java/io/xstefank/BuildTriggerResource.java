@@ -5,11 +5,14 @@ import io.xstefank.model.json.BuildInfo;
 import io.xstefank.model.json.BuildJMSModifyPayload;
 import io.xstefank.model.json.BuildJMSTriggerPayload;
 import io.xstefank.model.json.BuildModifyInfo;
+import org.apache.http.HttpStatus;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -29,7 +32,7 @@ public class BuildTriggerResource {
 
     @POST
     @Path("/trigger")
-    public Response triggerBuild(BuildInfo buildInfo) {
+    public Response triggerBuild(@NotNull @Valid BuildInfo buildInfo) {
         String email = getEmail();
         logger.infof("Triggering build for product %s by %s", buildInfo, email);
 
@@ -40,7 +43,7 @@ public class BuildTriggerResource {
 
     @PUT
     @Path("/modify")
-    public Response modifyBuild(BuildModifyInfo buildModifyInfo) {
+    public Response modifyBuild(@NotNull @Valid BuildModifyInfo buildModifyInfo) {
         String email = getEmail();
         logger.infof("Triggering build modification for product %s by %s", buildModifyInfo, email);
 
