@@ -8,11 +8,11 @@ import io.xstefank.model.json.BuildJMSTriggerPayload;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSContext;
-import javax.jms.Session;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSContext;
+import jakarta.jms.Session;
 
 @ApplicationScoped
 public class BuildTrigger {

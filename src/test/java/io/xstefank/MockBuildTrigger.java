@@ -1,13 +1,14 @@
 package io.xstefank;
 
-import io.quarkus.arc.AlternativePriority;
 import io.xstefank.model.json.BuildJMSModifyPayload;
 import io.xstefank.model.json.BuildJMSTriggerPayload;
-
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.annotation.Priority;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Alternative;
 
 @ApplicationScoped
-@AlternativePriority(1)
+@Alternative
+@Priority(1)
 public class MockBuildTrigger extends BuildTrigger {
 
     @Override

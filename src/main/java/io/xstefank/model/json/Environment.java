@@ -1,6 +1,6 @@
 package io.xstefank.model.json;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 
 public class Environment {
