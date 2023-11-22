@@ -6,10 +6,10 @@ import io.xstefank.client.PKBClient;
 import io.xstefank.pkb.model.json.Project;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.NotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

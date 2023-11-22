@@ -1,8 +1,8 @@
 package io.xstefank;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.mockito.InjectMock;
 import io.quarkus.test.junit.mockito.InjectSpy;
 import io.quarkus.test.security.TestSecurity;
 import io.quarkus.test.security.oidc.Claim;
@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
