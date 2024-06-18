@@ -5,11 +5,6 @@ import io.xstefank.model.json.BuildInfo;
 import io.xstefank.model.json.BuildJMSModifyPayload;
 import io.xstefank.model.json.BuildJMSTriggerPayload;
 import io.xstefank.model.json.BuildModifyInfo;
-import org.apache.http.HttpStatus;
-import org.eclipse.microprofile.jwt.Claims;
-import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.jboss.logging.Logger;
-
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +12,9 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.jwt.Claims;
+import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.jboss.logging.Logger;
 
 @Path("/build-trigger")
 public class BuildTriggerResource {

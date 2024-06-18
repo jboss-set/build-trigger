@@ -5,14 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.xstefank.client.PKBClient;
 import io.xstefank.model.json.BuildJMSModifyPayload;
 import io.xstefank.model.json.BuildJMSTriggerPayload;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.JMSContext;
 import jakarta.jms.Session;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
 public class BuildTrigger {

@@ -21,32 +21,19 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class PKBIndexer {
 
-    public Map<String, List<Project>> projects;
-
     @Inject
     @RestClient
     PKBClient pkbClient;
 
-    void onStart(@Observes StartupEvent event) {
-        projects = new HashMap<>();
-
-        if (!LaunchMode.current().equals(LaunchMode.TEST)) {
-            pkbClient.getProjects().forEach(project -> {
-                projects.computeIfAbsent(project.project, s -> new ArrayList<>());
-                projects.get(project.project).add(project);
-            });
-        }
-    }
-
     public Set<String> getProjectIds() {
-        return Collections.unmodifiableSet(projects.entrySet().stream()
+        return getProjects().entrySet().stream()
             .flatMap(e -> e.getValue().stream()
                 .map(v -> String.format("%s%s", e.getKey(), !v.stream.isBlank() ? " - " + v.stream : "")))
-            .collect(Collectors.toSet()));
+            .collect(Collectors.toUnmodifiableSet());
     }
 
     public Project getProject(String id, String stream) {
-        List<Project> found = projects.get(id);
+        List<Project> found = getProjects().get(id);
 
         if (found == null) {
             throw new NotFoundException(String.format("Project '%s' not found", id));
@@ -61,5 +48,18 @@ public class PKBIndexer {
 
         return found.stream().filter(p -> p.stream.equals("")).findFirst()
             .orElseThrow(() -> new NotFoundException(String.format("Project '%s' not found", id)));
+    }
+
+    private Map<String, List<Project>> getProjects() {
+        Map<String, List<Project>> projects = new HashMap<>();
+
+        if (!LaunchMode.current().equals(LaunchMode.TEST)) {
+            pkbClient.getProjects().forEach(project -> {
+                projects.computeIfAbsent(project.project, s -> new ArrayList<>());
+                projects.get(project.project).add(project);
+            });
+        }
+
+        return projects;
     }
 }
