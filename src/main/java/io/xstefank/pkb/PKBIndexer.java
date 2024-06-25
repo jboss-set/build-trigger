@@ -4,14 +4,13 @@ import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.StartupEvent;
 import io.xstefank.client.PKBClient;
 import io.xstefank.pkb.model.json.Project;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,19 +20,25 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class PKBIndexer {
 
+    public Map<String, List<Project>> projects;
+
     @Inject
     @RestClient
     PKBClient pkbClient;
 
+    void onStart(@Observes StartupEvent event) {
+        loadProjects();
+    }
+
     public Set<String> getProjectIds() {
-        return getProjects().entrySet().stream()
+        return projects.entrySet().stream()
             .flatMap(e -> e.getValue().stream()
                 .map(v -> String.format("%s%s", e.getKey(), !v.stream.isBlank() ? " - " + v.stream : "")))
             .collect(Collectors.toUnmodifiableSet());
     }
 
     public Project getProject(String id, String stream) {
-        List<Project> found = getProjects().get(id);
+        List<Project> found = projects.get(id);
 
         if (found == null) {
             throw new NotFoundException(String.format("Project '%s' not found", id));
@@ -50,8 +55,8 @@ public class PKBIndexer {
             .orElseThrow(() -> new NotFoundException(String.format("Project '%s' not found", id)));
     }
 
-    private Map<String, List<Project>> getProjects() {
-        Map<String, List<Project>> projects = new HashMap<>();
+    private void loadProjects() {
+        projects = new HashMap<>();
 
         if (!LaunchMode.current().equals(LaunchMode.TEST)) {
             pkbClient.getProjects().forEach(project -> {
@@ -59,7 +64,5 @@ public class PKBIndexer {
                 projects.get(project.project).add(project);
             });
         }
-
-        return projects;
     }
 }
