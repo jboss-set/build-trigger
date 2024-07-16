@@ -1,8 +1,10 @@
 package io.xstefank.pkb;
 
+import io.quarkus.logging.Log;
 import io.quarkus.runtime.LaunchMode;
 import io.quarkus.runtime.StartupEvent;
 import io.xstefank.client.PKBClient;
+import io.xstefank.exception.PKBIndexNotLoadedException;
 import io.xstefank.pkb.model.json.Project;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -27,7 +29,11 @@ public class PKBIndexer {
     PKBClient pkbClient;
 
     void onStart(@Observes StartupEvent event) {
-        loadProjects();
+        try {
+            loadProjects();
+        } catch (PKBIndexNotLoadedException e) {
+            projects = new HashMap<>();
+        }
     }
 
     public Set<String> getProjectIds() {
@@ -55,14 +61,19 @@ public class PKBIndexer {
             .orElseThrow(() -> new NotFoundException(String.format("Project '%s' not found", id)));
     }
 
-    private void loadProjects() {
+    public void loadProjects() throws PKBIndexNotLoadedException {
         projects = new HashMap<>();
 
         if (!LaunchMode.current().equals(LaunchMode.TEST)) {
-            pkbClient.getProjects().forEach(project -> {
-                projects.computeIfAbsent(project.project, s -> new ArrayList<>());
-                projects.get(project.project).add(project);
-            });
+            try {
+                pkbClient.getProjects().forEach(project -> {
+                    projects.computeIfAbsent(project.project, s -> new ArrayList<>());
+                    projects.get(project.project).add(project);
+                });
+            } catch (Exception e) {
+                Log.error("Cannot load PKB index", e);
+                throw new PKBIndexNotLoadedException(e);
+            }
         }
     }
 }
