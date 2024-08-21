@@ -2,16 +2,15 @@ package io.xstefank;
 
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
-import io.xstefank.exception.PKBIndexNotLoadedException;
+import io.xstefank.exception.PNCIndexNotLoadedException;
 import io.xstefank.model.json.ProjectInfo;
-import io.xstefank.pkb.PKBIndexer;
+import io.xstefank.pnc.PNCIndexer;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import org.jboss.resteasy.reactive.RestQuery;
 
 import java.util.Set;
 import java.util.function.Function;
@@ -20,7 +19,7 @@ import java.util.function.Function;
 public class FrontendResource {
 
     @Inject
-    PKBIndexer pkbIndexer;
+    PNCIndexer PNCIndexer;
 
     @CheckedTemplate
     public static class Templates {
@@ -60,18 +59,18 @@ public class FrontendResource {
 
     @GET
     @Path("project/{id}")
-    public ProjectInfo getProjectInfoFor(String id, @RestQuery String stream) {
-        return ProjectInfo.from(pkbIndexer.getProject(id, stream));
+    public ProjectInfo getProjectInfoFor(String id) {
+        return ProjectInfo.from(PNCIndexer.getProject(id));
     }
 
     @POST
     @Path("/pkb-reload")
-    public void reloadPKB() throws PKBIndexNotLoadedException {
-        pkbIndexer.loadProjects();
+    public void reloadPKB() throws PNCIndexNotLoadedException {
+        PNCIndexer.loadProjects();
     }
 
     private TemplateInstance getEmptyOr(Function<Set<String>, TemplateInstance> templateFunction) {
-        Set<String> projectIds = pkbIndexer.getProjectIds();
+        Set<String> projectIds = PNCIndexer.getProjectIds();
         return projectIds.isEmpty() ? Templates.emptyIndex() : templateFunction.apply(projectIds);
     }
 }

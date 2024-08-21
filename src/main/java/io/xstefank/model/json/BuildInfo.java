@@ -10,7 +10,7 @@ public class BuildInfo {
 
     @NotNull
     @Valid
-    public Environment environment;
+    public EnvironmentTools environmentTools;
 
     @NotNull
     public String upstream;
@@ -28,7 +28,7 @@ public class BuildInfo {
     public String toString() {
         return "BuildInfo{" +
             "project='" + project + '\'' +
-            ", environment=" + environment +
+            ", environmentTools=" + environmentTools +
             ", upstream='" + upstream + '\'' +
             ", revision='" + revision + '\'' +
             ", script='" + script + '\'' +

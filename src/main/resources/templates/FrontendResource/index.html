@@ -18,7 +18,7 @@
 
 <div class="container">
 
-    <h1><b>Component build</b></h1>
+    <h1><b>EAP 8.0 component build</b></h1>
     <br/>
 
     <form id="buildForm" class="form-horizontal">
@@ -208,9 +208,9 @@
                 document.querySelector("#script").style.height = document.querySelector("#script").scrollHeight + "px";
 
                 $("#openjdk-list-group").empty();
-                response.environment.openjdk.sort().forEach(id => appendCheckBoxLI(id, "openjdk"));
+                response.environmentTools.openjdk.sort().forEach(id => appendCheckBoxLI(id, "openjdk"));
                 $("#maven-list-group").empty();
-                response.environment.maven.sort().forEach(id => appendCheckBoxLI(id, "maven"));
+                response.environmentTools.maven.sort().forEach(id => appendCheckBoxLI(id, "maven"));
             }).fail(function (err) {
                 $("#build-trigger-result-message").append("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span class='pficon pficon-close'></span></button><span class='pficon pficon-error-circle-o'></span><strong>Error </strong>" + err.responseText + "</div>");
                 $("#build-button").removeClass("disabled").removeAttr("disabled");
@@ -236,7 +236,7 @@
             return false;
         }
 
-        const environment = {
+        const environmentTools = {
             openjdk: openjdk,
             maven: maven
         }
@@ -247,7 +247,7 @@
             version: $("#version").val(),
             revision: $("#revision").val(),
             script: $("#script").val(),
-            environment: environment
+            environmentTools: environmentTools
         }
         console.log("BuildInfo: " + JSON.stringify(buildInfo));
 
@@ -282,8 +282,8 @@
                 '<p><b>Version: </b>' + buildInfo.version + '</p>' +
                 '<p><b>Revision: </b>' + buildInfo.revision + '</p>' +
                 '<p><b>Script: </b>' + buildInfo.script + '</p>' +
-                '<p><b>OpenJDK: </b>' + buildInfo.environment.openjdk.join(', ') + '</p>' +
-                '<p><b>Maven: </b>' + buildInfo.environment.maven.join(', ') + '</p>' +
+                '<p><b>OpenJDK: </b>' + buildInfo.environmentTools.openjdk.join(', ') + '</p>' +
+                '<p><b>Maven: </b>' + buildInfo.environmentTools.maven.join(', ') + '</p>' +
                 '</div>',
             buttons: {
                 confirm: {

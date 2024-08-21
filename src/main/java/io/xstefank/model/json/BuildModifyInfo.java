@@ -10,7 +10,7 @@ public class BuildModifyInfo {
 
     @NotNull
     @Valid
-    public Environment environment;
+    public EnvironmentTools environmentTools;
 
     @NotNull
     public String upstream;
@@ -22,7 +22,7 @@ public class BuildModifyInfo {
     public String toString() {
         return "BuildModifyInfo{" +
             "project='" + project + '\'' +
-            ", environment=" + environment +
+            ", environmentTools=" + environmentTools +
             ", upstream='" + upstream + '\'' +
             ", script='" + script + '\'' +
             '}';

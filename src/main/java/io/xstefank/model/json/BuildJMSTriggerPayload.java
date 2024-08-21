@@ -4,7 +4,7 @@ public class BuildJMSTriggerPayload {
 
     public String email;
     public String project;
-    public Environment environment;
+    public EnvironmentTools environmentTools;
     public String upstream;
     public String revision;
     public String script;
@@ -15,7 +15,7 @@ public class BuildJMSTriggerPayload {
 
         createBuildPayload.email = email;
         createBuildPayload.project = buildInfo.project;
-        createBuildPayload.environment = buildInfo.environment;
+        createBuildPayload.environmentTools = buildInfo.environmentTools;
         createBuildPayload.upstream = buildInfo.upstream;
         createBuildPayload.revision = buildInfo.revision;
         createBuildPayload.script = buildInfo.script;
@@ -29,7 +29,7 @@ public class BuildJMSTriggerPayload {
         return "BuildJMSTriggerPayload{" +
             "email='" + email + '\'' +
             ", project='" + project + '\'' +
-            ", environment=" + environment +
+            ", environmentTools=" + environmentTools +
             ", upstream='" + upstream + '\'' +
             ", revision='" + revision + '\'' +
             ", script='" + script + '\'' +

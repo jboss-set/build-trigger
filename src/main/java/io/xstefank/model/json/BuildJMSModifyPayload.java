@@ -4,7 +4,7 @@ public class BuildJMSModifyPayload {
 
     public String email;
     public String project;
-    public Environment environment;
+    public EnvironmentTools environmentTools;
     public String upstream;
     public String script;
 
@@ -13,7 +13,7 @@ public class BuildJMSModifyPayload {
 
         buildJMSModifyPayload.email = email;
         buildJMSModifyPayload.project = buildModifyInfo.project;
-        buildJMSModifyPayload.environment = buildModifyInfo.environment;
+        buildJMSModifyPayload.environmentTools = buildModifyInfo.environmentTools;
         buildJMSModifyPayload.upstream = buildModifyInfo.upstream;
         buildJMSModifyPayload.script = buildModifyInfo.script;
 
@@ -25,7 +25,7 @@ public class BuildJMSModifyPayload {
         return "BuildJMSModifyPayload{" +
             "email='" + email + '\'' +
             ", project='" + project + '\'' +
-            ", environment=" + environment +
+            ", environmentTools=" + environmentTools +
             ", upstream='" + upstream + '\'' +
             ", script='" + script + '\'' +
             '}';

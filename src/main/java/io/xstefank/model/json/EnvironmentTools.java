@@ -3,7 +3,7 @@ package io.xstefank.model.json;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 
-public class Environment {
+public class EnvironmentTools {
 
     @Size(min = 1)
     public List<String> openjdk;
@@ -13,7 +13,7 @@ public class Environment {
 
     @Override
     public String toString() {
-        return "Environment{" +
+        return "EnvironmentTools{" +
             "openjdk=" + openjdk +
             ", maven=" + maven +
             '}';
