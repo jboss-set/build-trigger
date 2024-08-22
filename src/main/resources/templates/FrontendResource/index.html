@@ -119,6 +119,12 @@
         {#if project}
         $("#project").val("{project}").click();
         {/if}
+
+        // Clear form fields on page load
+        $("#upstream").val('');
+        $("#version").val('');
+        $("#revision").val('');
+        $("#script").val('');
     });
 
     $("#additional-config").on("shown.bs.collapse", function () {
