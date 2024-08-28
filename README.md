@@ -45,6 +45,11 @@ You can then execute your native executable with: `./target/build-trigger-1.0.0-
 
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.html.
 
+## Developing the application
+
+Instructions to locally build and deploy the application are in a [document](https://docs.google.com/document/d/1PqOV4LKC8AewTik9RNcuzP-I3dmoZk4SWIei07dkP0E/edit)
+with restricted access. Ask for access in case you don't have permissions to view the document.
+
 ## Related guides
 
 - RESTEasy JAX-RS ([guide](https://quarkus.io/guides/rest-json)): REST endpoint framework implementing JAX-RS and more
