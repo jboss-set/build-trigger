@@ -26,8 +26,6 @@ public class FrontendResource {
     public static class Templates {
         public static native TemplateInstance index(Set<String> projectIds, String project);
 
-        public static native TemplateInstance modify(Set<String> projectIds, String project);
-
         public static native TemplateInstance emptyIndex();
     }
 
@@ -42,20 +40,6 @@ public class FrontendResource {
     @Produces(MediaType.TEXT_HTML)
     public TemplateInstance getIndexWithProject(String project) {
         return getEmptyOr((projectIds) -> Templates.index(projectIds, project));
-    }
-
-    @GET
-    @Path("modify")
-    @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance getModify() {
-        return getEmptyOr((projectIds) -> Templates.modify(projectIds, null));
-    }
-
-    @GET
-    @Path("modify/{project}")
-    @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance getModifyWithProject(String project) {
-        return getEmptyOr((projectIds) -> Templates.modify(projectIds, project));
     }
 
     @GET
