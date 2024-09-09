@@ -3,7 +3,6 @@ package org.jboss.set;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.set.client.PKBClient;
-import org.jboss.set.model.json.BuildJMSModifyPayload;
 import org.jboss.set.model.json.BuildJMSTriggerPayload;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -19,9 +18,6 @@ public class BuildTrigger {
     @ConfigProperty(name = "build-trigger.topic")
     String triggerTopic;
 
-    @ConfigProperty(name = "build-modify.topic")
-    String modifyTopic;
-
     @Inject
     ConnectionFactory connectionFactory;
 
@@ -32,16 +28,8 @@ public class BuildTrigger {
     PKBClient pkbClient;
 
     public void triggerBuild(BuildJMSTriggerPayload payloadMessage) {
-        sendJMS(triggerTopic, payloadMessage);
-    }
-
-    public void modifyBuild(BuildJMSModifyPayload payloadMessage) {
-        sendJMS(modifyTopic, payloadMessage);
-    }
-
-    private void sendJMS(String topic, Object payload) {
         try (JMSContext context = connectionFactory.createContext(Session.AUTO_ACKNOWLEDGE)) {
-            context.createProducer().send(context.createTopic(topic), objectMapper.writeValueAsString(payload));
+            context.createProducer().send(context.createTopic(triggerTopic), objectMapper.writeValueAsString(payloadMessage));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

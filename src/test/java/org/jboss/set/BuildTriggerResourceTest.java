@@ -9,7 +9,6 @@ import io.quarkus.test.security.oidc.Claim;
 import io.quarkus.test.security.oidc.OidcSecurity;
 import org.jboss.set.client.PKBClient;
 import org.jboss.set.model.json.BuildInfo;
-import org.jboss.set.model.json.BuildModifyInfo;
 import org.jboss.set.model.json.Environment;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Disabled;
@@ -77,36 +76,6 @@ public class BuildTriggerResourceTest {
     }
 
     @Test
-    @TestSecurity(user = "user", roles = "user")
-    @OidcSecurity(claims = {
-        @Claim(key = "email", value = USER_EMAIL)
-    })
-    public void testModifyEndpoint() throws Exception {
-        Mockito.when(pkbClient.getProjects()).thenReturn(List.of());
-
-        BuildModifyInfo buildModifyInfo = createTestBuildModifyInfo();
-
-        given()
-            .body(objectMapper.writeValueAsString(buildModifyInfo))
-            .contentType(MediaType.APPLICATION_JSON)
-            .when().put("/build-trigger/modify")
-            .then()
-            .statusCode(200)
-            .body(is("Triggered build modification for " + BUILD_INFO_PROJECT));
-
-        Mockito.verify(buildTrigger, Mockito.times(1))
-            .modifyBuild(Mockito.argThat(x -> {
-                assertEquals(USER_EMAIL, x.email);
-                assertEquals(BUILD_INFO_PROJECT, x.project);
-                assertEquals(BUILD_INFO_UPSTREAM, x.upstream);
-                assertEquals(BUILD_INFO_ENVIRONMENT_OPENJDK, x.environment.openjdk);
-                assertEquals(BUILD_INFO_ENVIRONMENT_MAVEN, x.environment.maven);
-                assertEquals(BUILD_INFO_SCRIPT, x.script);
-                return true;
-            }));
-    }
-
-    @Test
     @Disabled("Anonymous identity doesn't work in tests. (https://github.com/quarkusio/quarkus/issues/21888)")
     @TestSecurity
     public void testTriggerEndpointNoAuth() throws Exception {
@@ -136,17 +105,5 @@ public class BuildTriggerResourceTest {
         buildInfo.environment.maven = BUILD_INFO_ENVIRONMENT_MAVEN;
 
         return buildInfo;
-    }
-
-    private BuildModifyInfo createTestBuildModifyInfo() {
-        BuildModifyInfo buildModifyInfo = new BuildModifyInfo();
-        buildModifyInfo.project = BUILD_INFO_PROJECT;
-        buildModifyInfo.upstream = BUILD_INFO_UPSTREAM;
-        buildModifyInfo.script = BUILD_INFO_SCRIPT;
-        buildModifyInfo.environment = new Environment();
-        buildModifyInfo.environment.openjdk = BUILD_INFO_ENVIRONMENT_OPENJDK;
-        buildModifyInfo.environment.maven = BUILD_INFO_ENVIRONMENT_MAVEN;
-
-        return buildModifyInfo;
     }
 }
