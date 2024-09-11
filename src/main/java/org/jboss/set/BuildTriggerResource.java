@@ -33,6 +33,6 @@ public class BuildTriggerResource {
 
         buildTrigger.triggerBuild(BuildJMSTriggerPayload.from(buildInfo, email));
 
-        return Response.ok("Triggered build for " + buildInfo.project + ":" + buildInfo.version).build();
+        return Response.ok("Triggered build for " + buildInfo.gitRepo + ":" + buildInfo.projectVersion).build();
     }
 }
