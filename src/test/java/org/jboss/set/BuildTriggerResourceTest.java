@@ -9,7 +9,6 @@ import io.quarkus.test.security.oidc.Claim;
 import io.quarkus.test.security.oidc.OidcSecurity;
 import org.jboss.set.client.PKBClient;
 import org.jboss.set.model.json.BuildInfo;
-import org.jboss.set.model.json.Environment;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -20,19 +19,19 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+import static org.jboss.set.model.json.Stream.EAP_7_3_X;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @QuarkusTest
 public class BuildTriggerResourceTest {
 
-    private static final String BUILD_INFO_PROJECT = "Test project";
-    private static final String BUILD_INFO_UPSTREAM = "git+https://github.com/non-exisitent/repo.git";
-    private static final String BUILD_INFO_VERSION = "1.0.0.Final";
-    private static final String BUILD_INFO_REVISION = "61ec86095de795f5fb817a7cc824d8d7cfb9ae51";
-    private static final String BUILD_INFO_SCRIPT = "mvn 'deploy'";
-    private static final List<String> BUILD_INFO_ENVIRONMENT_OPENJDK = List.of("8");
-    private static final List<String> BUILD_INFO_ENVIRONMENT_MAVEN = List.of("3.3.9");
     private static final String USER_EMAIL = "user@email.com";
+    private static final String BUILD_INFO_TAG = "git+https://github.com/non-exisitent/repo/tree/1.0.0.Final.git";
+    private static final String BUILD_INFO_GIT_REPO = "git+https://github.com/non-exisitent/repo.git";
+    private static final String BUILD_INFO_PROJECT_VERSION = "1.0.0.Final";
+    private static final String BUILD_INFO_COMMIT_SHA = "61ec86095de795f5fb817a7cc824d8d7cfb9ae51";
+    private static final List<String> BUILD_INFO_STREAMS = List.of(EAP_7_3_X.frontEnd);
+    private static final List<String> BUILD_JMS_TRIGGER_PAYLOAD_STREAMS = List.of(EAP_7_3_X.backEnd);
 
     @InjectMock
     @RestClient
@@ -51,7 +50,8 @@ public class BuildTriggerResourceTest {
     public void testTriggerEndpoint() throws Exception {
         Mockito.when(pkbClient.getProjects()).thenReturn(List.of());
 
-        BuildInfo buildInfo = createTestBuildInfo();
+        BuildInfo buildInfo = createTestBuildInfoWithoutStream();
+        buildInfo.streams = BUILD_INFO_STREAMS;
 
         given()
             .body(objectMapper.writeValueAsString(buildInfo))
@@ -59,18 +59,16 @@ public class BuildTriggerResourceTest {
             .when().post("/build-trigger/trigger")
             .then()
             .statusCode(200)
-            .body(is("Triggered build for " + BUILD_INFO_PROJECT + ":" + BUILD_INFO_VERSION));
+            .body(is("Triggered build for " + BUILD_INFO_GIT_REPO + ":" + BUILD_INFO_PROJECT_VERSION));
 
         Mockito.verify(buildTrigger, Mockito.times(1))
             .triggerBuild(Mockito.argThat(x -> {
                 assertEquals(USER_EMAIL, x.email);
-                assertEquals(BUILD_INFO_PROJECT, x.project);
-                assertEquals(BUILD_INFO_UPSTREAM, x.upstream);
-                assertEquals(BUILD_INFO_VERSION, x.version);
-                assertEquals(BUILD_INFO_REVISION, x.revision);
-                assertEquals(BUILD_INFO_ENVIRONMENT_OPENJDK, x.environment.openjdk);
-                assertEquals(BUILD_INFO_ENVIRONMENT_MAVEN, x.environment.maven);
-                assertEquals(BUILD_INFO_SCRIPT, x.script);
+                assertEquals(BUILD_INFO_TAG, x.tag);
+                assertEquals(BUILD_INFO_GIT_REPO, x.gitRepo);
+                assertEquals(BUILD_INFO_PROJECT_VERSION, x.projectVersion);
+                assertEquals(BUILD_INFO_COMMIT_SHA, x.commitSha);
+                assertEquals(BUILD_JMS_TRIGGER_PAYLOAD_STREAMS, x.streams);
                 return true;
             }));
     }
@@ -81,7 +79,8 @@ public class BuildTriggerResourceTest {
     public void testTriggerEndpointNoAuth() throws Exception {
         Mockito.when(pkbClient.getProjects()).thenReturn(List.of());
 
-        BuildInfo buildInfo = createTestBuildInfo();
+        BuildInfo buildInfo = createTestBuildInfoWithoutStream();
+        buildInfo.streams = BUILD_INFO_STREAMS;
 
         given()
             .header("Authorization", "")
@@ -93,16 +92,31 @@ public class BuildTriggerResourceTest {
             .statusCode(403);
     }
 
-    private BuildInfo createTestBuildInfo() {
+    @Test
+    @TestSecurity(user = "user", roles = "user")
+    @OidcSecurity(claims = {
+            @Claim(key = "email", value = USER_EMAIL)
+    })
+    public void testTriggerEndpointInvalidStream() throws Exception {
+        Mockito.when(pkbClient.getProjects()).thenReturn(List.of());
+
+        BuildInfo buildInfo = createTestBuildInfoWithoutStream();
+        buildInfo.streams = List.of("Invalid");;
+
+        given()
+                .body(objectMapper.writeValueAsString(buildInfo))
+                .contentType(MediaType.APPLICATION_JSON)
+                .when().post("/build-trigger/trigger")
+                .then()
+                .statusCode(422);
+    }
+
+    private BuildInfo createTestBuildInfoWithoutStream() {
         BuildInfo buildInfo = new BuildInfo();
-        buildInfo.project = BUILD_INFO_PROJECT;
-        buildInfo.upstream = BUILD_INFO_UPSTREAM;
-        buildInfo.version = BUILD_INFO_VERSION;
-        buildInfo.revision = BUILD_INFO_REVISION;
-        buildInfo.script = BUILD_INFO_SCRIPT;
-        buildInfo.environment = new Environment();
-        buildInfo.environment.openjdk = BUILD_INFO_ENVIRONMENT_OPENJDK;
-        buildInfo.environment.maven = BUILD_INFO_ENVIRONMENT_MAVEN;
+        buildInfo.tag = BUILD_INFO_TAG;
+        buildInfo.gitRepo = BUILD_INFO_GIT_REPO;
+        buildInfo.projectVersion = BUILD_INFO_PROJECT_VERSION;
+        buildInfo.commitSha = BUILD_INFO_COMMIT_SHA;
 
         return buildInfo;
     }

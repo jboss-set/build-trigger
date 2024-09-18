@@ -1,39 +1,45 @@
 package org.jboss.set.model.json;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BuildJMSTriggerPayload {
 
     public String email;
-    public String project;
-    public Environment environment;
-    public String upstream;
-    public String revision;
-    public String script;
-    public String version;
+    public String tag;
+    public String gitRepo;
+    public String projectVersion;
+    public String commitSha;
+    public List<String> streams;
 
     public static BuildJMSTriggerPayload from(BuildInfo buildInfo, String email) {
         BuildJMSTriggerPayload createBuildPayload = new BuildJMSTriggerPayload();
 
         createBuildPayload.email = email;
-        createBuildPayload.project = buildInfo.project;
-        createBuildPayload.environment = buildInfo.environment;
-        createBuildPayload.upstream = buildInfo.upstream;
-        createBuildPayload.revision = buildInfo.revision;
-        createBuildPayload.script = buildInfo.script;
-        createBuildPayload.version = buildInfo.version;
+        createBuildPayload.tag = buildInfo.tag;
+        createBuildPayload.gitRepo = buildInfo.gitRepo;
+        createBuildPayload.projectVersion = buildInfo.projectVersion;
+        createBuildPayload.commitSha = buildInfo.commitSha;
+        createBuildPayload.streams = getStreams(buildInfo.streams);
 
         return createBuildPayload;
+    }
+
+    private static List<String> getStreams(List<String> streamsFromFronted) {
+        List<String> streams = new ArrayList<>();
+        streamsFromFronted.forEach(s -> streams.add(Stream.getJsonStreamName(s)));
+        return streams;
     }
 
     @Override
     public String toString() {
         return "BuildJMSTriggerPayload{" +
-            "email='" + email + '\'' +
-            ", project='" + project + '\'' +
-            ", environment=" + environment +
-            ", upstream='" + upstream + '\'' +
-            ", revision='" + revision + '\'' +
-            ", script='" + script + '\'' +
-            ", version='" + version + '\'' +
-            '}';
+                "email='" + email + '\'' +
+                ", publicTag='" + tag + '\'' +
+                ", gitRepo=" + gitRepo +
+                ", version='" + projectVersion + '\'' +
+                ", commitSha='" + commitSha + '\'' +
+                ", streams='" + streams + '\'' +
+                '}';
     }
 }

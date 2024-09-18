@@ -1,38 +1,36 @@
 package org.jboss.set.model.json;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+import java.util.List;
 
 public class BuildInfo {
 
     @NotNull
-    public String project;
+    public String tag;
 
     @NotNull
-    @Valid
-    public Environment environment;
+    public String gitRepo;
 
     @NotNull
-    public String upstream;
+    public String projectVersion;
 
     @NotNull
-    public String revision;
+    public String commitSha;
 
     @NotNull
-    public String script;
-
-    @NotNull
-    public String version;
+    @Size(min = 1)
+    public List<String> streams;
 
     @Override
     public String toString() {
         return "BuildInfo{" +
-            "project='" + project + '\'' +
-            ", environment=" + environment +
-            ", upstream='" + upstream + '\'' +
-            ", revision='" + revision + '\'' +
-            ", script='" + script + '\'' +
-            ", version='" + version + '\'' +
+            "tag='" + tag + '\'' +
+            ", gitRepo=" + gitRepo +
+            ", projectVersion='" + projectVersion + '\'' +
+            ", commitSha='" + commitSha + '\'' +
+            ", streams='" + streams + '\'' +
             '}';
     }
 }
