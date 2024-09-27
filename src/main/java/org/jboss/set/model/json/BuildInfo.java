@@ -19,8 +19,6 @@ public class BuildInfo {
     @NotNull
     public String commitSha;
 
-    @NotNull
-    @Size(min = 1)
     public List<String> streams;
 
     @Override
