@@ -36,15 +36,13 @@ public class GitBuildInfoAssembler {
 
     Logger logger = Logger.getLogger(GitBuildInfoAssembler.class);
 
-    private final static String GITLAB_API = "/api/v4/projects/";
-    private final static String GITLAB_TAGS = "/repository/tags/";
-
     private final static String COMMIT = "commit";
     private final static String ID = "id";
     private final static String NAME = "name";
     private final static String SHA = "sha";
     private final static String OBJECT = "object";
     private final static String TAG = "tag";
+    private final static String TYPE = "type";
 
     public BuildInfo constructBuildFromURL(URL tagUrl) {
         String urlPath = tagUrl.getPath();
@@ -74,22 +72,21 @@ public class GitBuildInfoAssembler {
         String version = splitUrl[splitUrl.length - 1];
 
         JsonNode refsJson = githubRestClient.getRefsInfo(codeSpace, repository, version, githubKey);
-        if (refsJson != null) {
-            String tagSHA = refsJson.get(OBJECT).get(SHA).textValue();
-            JsonNode tagJson = githubRestClient.getTagInfo(codeSpace, repository, tagSHA, githubKey);
-            if (tagJson != null) {
-                BuildInfo buildInfo = new BuildInfo();
-                buildInfo.tag = tagUrl.toString();
-                buildInfo.commitSha = tagJson.get(OBJECT).get(SHA).textValue();
-                buildInfo.gitRepo = tagUrl.getProtocol() + "://" +  tagUrl.getHost() + "/" + codeSpace + "/" + repository;
-                buildInfo.projectVersion = tagJson.get(TAG).textValue();;
-
-                logger.infof("Build created with following parameters - sha: %s, version: %s, link: %s", buildInfo.commitSha, buildInfo.projectVersion, buildInfo.tag);
-                return buildInfo;
-            }
+        if (refsJson == null) {
+            logger.warnf("Failed to create BuildInfo for %s", tagUrl.toString());
+            return null;
         }
-        logger.warnf("Failed to create TagInfo for %s", tagUrl.toString());
-        return null;
+        String refsType = refsJson.get(OBJECT).get(TYPE).textValue();
+        String commitSHA = refsJson.get(OBJECT).get(SHA).textValue();
+        if (refsType.equals(TAG)) {
+            JsonNode tagJson = githubRestClient.getTagInfo(codeSpace, repository, commitSHA, githubKey);
+            if (tagJson == null) {
+                logger.warnf("Failed to retrieve tag info for %s", tagUrl.toString());
+                return null;
+            }
+            commitSHA = tagJson.path(OBJECT).path(SHA).asText();  // Update SHA from tag info
+        }
+        return buildBuildInfo(tagUrl, codeSpace, repository, version, commitSHA);
     }
 
     private BuildInfo constructGitlabBuild(String[] splitUrl, URL tagUrl, boolean isGitlabCee) {
@@ -99,16 +96,20 @@ public class GitBuildInfoAssembler {
 
         JsonNode tagJson = isGitlabCee ? gitlabCeeRestClient.getTagInfo(codeSpace + "/" + repository, version, "Bearer " + gitlabKey) : gitlabRestClient.getTagInfo(codeSpace + "/" + repository, version);
         if (tagJson != null) {
-            BuildInfo buildInfo = new BuildInfo();
-            buildInfo.tag = tagUrl.toString();
-            buildInfo.commitSha = tagJson.get(COMMIT).get(ID).textValue();
-            buildInfo.gitRepo = tagUrl.getProtocol() + "://" +  tagUrl.getHost() + "/" + codeSpace + "/" + repository;;
-            buildInfo.projectVersion = tagJson.get(NAME).textValue();
-
-            logger.infof("Build created with following parameters - sha: %s, version: %s, link: %s", buildInfo.commitSha, buildInfo.projectVersion, buildInfo.tag);
-            return buildInfo;
+            return buildBuildInfo(tagUrl, codeSpace, repository, tagJson.get(NAME).textValue(), tagJson.get(COMMIT).get(ID).textValue());
         }
-        logger.warnf("Failed to create TagInfo for %s", tagUrl.toString());
+        logger.warnf("Failed to create BuildInfo for %s", tagUrl.toString());
         return null;
+    }
+
+    private BuildInfo buildBuildInfo(URL tagUrl, String codespace, String repository, String version, String commitSHA) {
+        BuildInfo buildInfo = new BuildInfo();
+        buildInfo.tag = tagUrl.toString();
+        buildInfo.commitSha = commitSHA;
+        buildInfo.gitRepo = String.format("%s://%s/%s/%s", tagUrl.getProtocol(), tagUrl.getHost(), codespace, repository);
+        buildInfo.projectVersion = version;
+
+        logger.infof("Build created with following parameters - sha: %s, version: %s, link: %s", buildInfo.commitSha, buildInfo.projectVersion, buildInfo.tag);
+        return buildInfo;
     }
 }
