@@ -1,15 +1,12 @@
 package org.jboss.set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectSpy;
 import io.quarkus.test.security.TestSecurity;
 import io.quarkus.test.security.oidc.Claim;
 import io.quarkus.test.security.oidc.OidcSecurity;
-import org.jboss.set.client.PKBClient;
 import org.jboss.set.model.json.BuildInfo;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -33,10 +30,6 @@ public class BuildTriggerResourceTest {
     private static final List<String> BUILD_INFO_STREAMS = List.of(EAP_7_3_X.frontEnd);
     private static final List<String> BUILD_JMS_TRIGGER_PAYLOAD_STREAMS = List.of(EAP_7_3_X.backEnd);
 
-    @InjectMock
-    @RestClient
-    PKBClient pkbClient;
-
     @InjectSpy
     BuildTrigger buildTrigger;
 
@@ -48,8 +41,6 @@ public class BuildTriggerResourceTest {
         @Claim(key = "email", value = USER_EMAIL)
     })
     public void testTriggerEndpoint() throws Exception {
-        Mockito.when(pkbClient.getProjects()).thenReturn(List.of());
-
         BuildInfo buildInfo = createTestBuildInfoWithoutStream();
         buildInfo.streams = BUILD_INFO_STREAMS;
 
@@ -77,8 +68,6 @@ public class BuildTriggerResourceTest {
     @Disabled("Anonymous identity doesn't work in tests. (https://github.com/quarkusio/quarkus/issues/21888)")
     @TestSecurity
     public void testTriggerEndpointNoAuth() throws Exception {
-        Mockito.when(pkbClient.getProjects()).thenReturn(List.of());
-
         BuildInfo buildInfo = createTestBuildInfoWithoutStream();
         buildInfo.streams = BUILD_INFO_STREAMS;
 
@@ -98,8 +87,6 @@ public class BuildTriggerResourceTest {
             @Claim(key = "email", value = USER_EMAIL)
     })
     public void testTriggerEndpointInvalidStream() throws Exception {
-        Mockito.when(pkbClient.getProjects()).thenReturn(List.of());
-
         BuildInfo buildInfo = createTestBuildInfoWithoutStream();
         buildInfo.streams = List.of("Invalid");;
 
