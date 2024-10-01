@@ -88,7 +88,7 @@ public class BuildTriggerResourceTest {
     })
     public void testTriggerEndpointInvalidStream() throws Exception {
         BuildInfo buildInfo = createTestBuildInfoWithoutStream();
-        buildInfo.streams = List.of("Invalid");;
+        buildInfo.streams = List.of("Invalid");
 
         given()
                 .body(objectMapper.writeValueAsString(buildInfo))

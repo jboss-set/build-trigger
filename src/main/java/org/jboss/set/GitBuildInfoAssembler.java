@@ -36,13 +36,13 @@ public class GitBuildInfoAssembler {
 
     Logger logger = Logger.getLogger(GitBuildInfoAssembler.class);
 
-    private final static String COMMIT = "commit";
-    private final static String ID = "id";
-    private final static String NAME = "name";
-    private final static String SHA = "sha";
-    private final static String OBJECT = "object";
-    private final static String TAG = "tag";
-    private final static String TYPE = "type";
+    private static final String COMMIT = "commit";
+    private static final String ID = "id";
+    private static final String NAME = "name";
+    private static final String SHA = "sha";
+    private static final String OBJECT = "object";
+    private static final String TAG = "tag";
+    private static final String TYPE = "type";
 
     public BuildInfo constructBuildFromURL(URL tagUrl) {
         String urlPath = tagUrl.getPath();
