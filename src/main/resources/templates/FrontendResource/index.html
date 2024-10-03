@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Build Trigger</title>
+    <link rel="preload" href="https://unpkg.com/@patternfly/patternfly/patternfly.css" as="style" onload="this.rel='stylesheet'; document.body.style.display = 'block';">
+    <noscript>
+        <link rel="stylesheet" href="https://unpkg.com/@patternfly/patternfly/patternfly.css">
+    </noscript>
+    <style>body { display: none; }</style>
+</head>
+<body>
+<div class="pf-v5-c-page">
+    {#include FrontendResource/header /}
+    <main class="pf-v5-c-page__main" tabindex="-1">
+        <section class="pf-v5-c-page__main-section pf-m-limit-width pf-m-align-center">
+            <div class="pf-v5-c-page__main-body">
+                <form id="buildForm" class="pf-v5-c-form">
+                    <div class="pf-v5-c-form__group" id="form-fields"><!-- Generated Form Fields --></div>
+                    <div class="pf-v5-c-form__group-control">
+                        {#include FrontendResource/streams /}
+                    </div>
+                    <div class="pf-v5-c-form__group-control">
+                        <div class="pf-v5-c-form__actions">
+                            <button id="build-button" type="submit" class="pf-v5-c-button pf-m-tertiary pf-m-display-lg">Trigger build</button>
+                        </div>
+                        <div class="pf-v5-c-helper-text">
+                            <div class="pf-v5-c-helper-text__item pf-m-indeterminate" >
+                                <span class="pf-v5-c-helper-text__item-text"><span aria-hidden="true">&#42;</span> Required fields.</span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div class="pf-v5-c-alert-group pf-m-toast" id="toast-container"><!-- Generated Toast Notifications --></div>
+
+<!-- Submit Modal -->
+<div class="pf-v5-c-backdrop" id="submit-modal" hidden>
+    {#include FrontendResource/modal /}
+</div>
+
+</body>
+
+<script defer type="module" src="/js/main.js">
+
+</script>
+</html>
