@@ -75,7 +75,7 @@ public class GitBuildInfoAssembler {
         JsonNode refsJson;
 
         try {
-            refsJson = githubRestClient.getRefsInfo(codeSpace, repository, version, githubKey);
+            refsJson = githubRestClient.getRefsInfo(codeSpace, repository, version, "Bearer " + githubKey);
         } catch (ClientWebApplicationException e) {
             logger.errorf("Failed to retrieve refs info for %s in constructGithubBuild", tagUrl.toString());
             throw new GitRestClientException("Failed to retrieve refs info from Github: " + e.getMessage(), e, e.getResponse());
@@ -91,7 +91,7 @@ public class GitBuildInfoAssembler {
         if (refsType.equals(TAG)) {
             JsonNode tagJson;
             try {
-                tagJson = githubRestClient.getTagInfo(codeSpace, repository, commitSHA, githubKey);
+                tagJson = githubRestClient.getTagInfo(codeSpace, repository, commitSHA, "Bearer " + githubKey);
             } catch (ClientWebApplicationException e) {
                 logger.errorf("Failed to retrieve tag info for %s in constructGithubBuild", tagUrl.toString());
                 throw new GitRestClientException("Failed to retrieve tag info from Github: " + e.getMessage(), e, e.getResponse());
