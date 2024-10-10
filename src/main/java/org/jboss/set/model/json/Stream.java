@@ -1,5 +1,6 @@
 package org.jboss.set.model.json;
 
+import org.jboss.logging.Logger;
 import org.jboss.set.exception.UnknownStreamException;
 
 public enum Stream {
@@ -8,6 +9,8 @@ public enum Stream {
     EAP_8_0_X("EAP 8.0.x", "eap:8.0.x"),
     XP_4_0_X("XP 4.0.x", "eap-xp:4.0.x"),
     XP_5_0_X("XP 5.0.x", "eap-xp:5.0.x");
+
+    static final Logger logger = Logger.getLogger(Stream.class);
 
     public final String frontEnd;
     public final String backEnd;
@@ -23,6 +26,7 @@ public enum Stream {
                 return stream.backEnd;
             }
         }
-        throw new UnknownStreamException("Unknown stream");
+        logger.errorf("Unknown stream: '%s'.", streamFromFrontend);
+        throw new UnknownStreamException("Unknown stream: '" + streamFromFrontend + "'.");
     }
 }

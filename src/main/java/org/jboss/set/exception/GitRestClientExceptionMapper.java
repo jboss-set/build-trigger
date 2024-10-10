@@ -14,22 +14,24 @@ public class GitRestClientExceptionMapper implements ExceptionMapper<GitRestClie
     public Response toResponse(GitRestClientException exception) {
         int responseCode = exception.getResponse().getStatus();
 
-        logger.error(String.format("Invocation returned HTTP %s %s", responseCode, exception.getResponse().getStatusInfo().getReasonPhrase()));
+        logger.errorf(String.format("Invocation returned HTTP %s %s", responseCode, exception.getResponse().getStatusInfo().getReasonPhrase()));
 
         switch (responseCode) {
             case 404 -> {
-                logger.warn("Requested tag not found");
+                logger.warnf("Requested tag not found. %s", exception.getMessage());
                 return Response.status(404)
                         .entity(exception.getMessage())
                         .build();
             }
             case 403 -> {
-                logger.warn("Access denied. This is likely caused by expired token, please contact Build Trigger owners");
+                logger.warnf("Access denied. This is likely caused by expired token, please contact Build Trigger owners. %s"
+                        , exception.getMessage());
                 return Response.status(403)
                         .entity(exception.getMessage())
                         .build();
             }
             default -> {
+                logger.warnf("An unexpected error occurred. %s", exception.getMessage());
                 return Response.status(500)
                         .entity(exception.getMessage())
                         .build();
