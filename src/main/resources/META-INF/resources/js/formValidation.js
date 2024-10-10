@@ -36,23 +36,21 @@ export function monitorFormValidity() {
 
 // Validate the "tag" input field
 export function validateTag() {
-    const inputValue = this.value;
+    const inputValue = this.value.trim();
     const alertMessage = document.getElementById('tag-alert');
-    const validBases = ['github.com', 'gitlab.com', 'gitlab.cee.redhat.com'];
-    const isValid = validBases.some(base => inputValue.includes(base));
     toggleVisibility(alertMessage, inputValue && !httpsPattern.test(inputValue));
 }
 
 // Validate the "repository" input field with https pattern
 export function validateRepository() {
-    const inputValue = this.value;
+    const inputValue = this.value.trim();
     const alertMessage = document.getElementById('repository-alert');
     toggleVisibility(alertMessage, inputValue && !httpsPattern.test(inputValue));
 }
 
 // Validate the "commit" input field. A valid commit SHA is a 7 to 40 character hexadecimal string.
 export function validateCommit() {
-    const inputValue = this.value;
+    const inputValue = this.value.trim();
     const alertMessage = document.getElementById('commit-alert');
     // Check if the input is a valid hexadecimal string and has the correct length
     const isValidSHA = /^[a-fA-F0-9]{7,40}$/.test(inputValue);
