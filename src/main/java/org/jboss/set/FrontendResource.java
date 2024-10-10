@@ -20,6 +20,8 @@ public class FrontendResource {
 
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance getIndex() { return Templates.index(List.of(Stream.values()));}
+    public TemplateInstance getIndex() {
+        return Templates.index(List.of(Stream.values()));
+    }
 
 }

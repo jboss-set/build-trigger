@@ -16,6 +16,8 @@
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
     <quarkus.platform.version>3.13.0</quarkus.platform.version>
     <surefire-plugin.version>3.2.3</surefire-plugin.version>
+    <version.org.wildfly.checkstyle.wildfly-checkstyle-config>1.0.8.Final</version.org.wildfly.checkstyle.wildfly-checkstyle-config>
+    <version.org.apache.maven.plugins.maven-checkstyle-plugin>3.5.0</version.org.apache.maven.plugins.maven-checkstyle-plugin>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -89,6 +91,11 @@
       <artifactId>quarkus-test-security-oidc</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.wildfly.checkstyle</groupId>
+      <artifactId>wildfly-checkstyle-config</artifactId>
+      <version>${version.org.wildfly.checkstyle.wildfly-checkstyle-config}</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -122,6 +129,35 @@
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
             <maven.home>${maven.home}</maven.home>
           </systemPropertyVariables>
+        </configuration>
+      </plugin>
+      <!-- Checkstyle -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${version.org.apache.maven.plugins.maven-checkstyle-plugin}</version>
+        <executions>
+          <execution>
+            <id>validate</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.wildfly.checkstyle</groupId>
+            <artifactId>wildfly-checkstyle-config</artifactId>
+            <version>${version.org.wildfly.checkstyle.wildfly-checkstyle-config}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <configLocation>wildfly-checkstyle/checkstyle.xml</configLocation>
+          <consoleOutput>true</consoleOutput>
+          <failsOnError>true</failsOnError>
+          <linkXRef>false</linkXRef>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
         </configuration>
       </plugin>
     </plugins>
