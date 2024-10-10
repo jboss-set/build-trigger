@@ -6,9 +6,11 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
+import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import org.jboss.set.client.GithubRestClient;
 import org.jboss.set.client.GitlabCeeRestClient;
 import org.jboss.set.client.GitlabRestClient;
+import org.jboss.set.exception.GitRestClientException;
 import org.jboss.set.model.json.BuildInfo;
 
 import java.net.URL;
@@ -70,16 +72,31 @@ public class GitBuildInfoAssembler {
         String codeSpace = splitUrl[1];
         String repository = splitUrl[2];
         String version = splitUrl[splitUrl.length - 1];
+        JsonNode refsJson;
 
-        JsonNode refsJson = githubRestClient.getRefsInfo(codeSpace, repository, version, githubKey);
+        try {
+            refsJson = githubRestClient.getRefsInfo(codeSpace, repository, version, githubKey);
+        } catch (ClientWebApplicationException e) {
+            logger.errorf("Failed to retrieve refs info for %s in constructGithubBuild", tagUrl.toString());
+            throw new GitRestClientException("Failed to retrieve refs info from Github: " + e.getMessage(), e, e.getResponse());
+        }
+
         if (refsJson == null) {
             logger.warnf("Failed to create BuildInfo for %s", tagUrl.toString());
             return null;
         }
+
         String refsType = refsJson.get(OBJECT).get(TYPE).textValue();
         String commitSHA = refsJson.get(OBJECT).get(SHA).textValue();
         if (refsType.equals(TAG)) {
-            JsonNode tagJson = githubRestClient.getTagInfo(codeSpace, repository, commitSHA, githubKey);
+            JsonNode tagJson;
+            try {
+                tagJson = githubRestClient.getTagInfo(codeSpace, repository, commitSHA, githubKey);
+            } catch (ClientWebApplicationException e) {
+                logger.errorf("Failed to retrieve tag info for %s in constructGithubBuild", tagUrl.toString());
+                throw new GitRestClientException("Failed to retrieve tag info from Github: " + e.getMessage(), e, e.getResponse());
+            }
+
             if (tagJson == null) {
                 logger.warnf("Failed to retrieve tag info for %s", tagUrl.toString());
                 return null;
@@ -93,8 +110,17 @@ public class GitBuildInfoAssembler {
         String codeSpace = splitUrl[1];
         String repository = splitUrl[2];
         String version = splitUrl[splitUrl.length - 1];
+        JsonNode tagJson;
 
-        JsonNode tagJson = isGitlabCee ? gitlabCeeRestClient.getTagInfo(codeSpace + "/" + repository, version, "Bearer " + gitlabKey) : gitlabRestClient.getTagInfo(codeSpace + "/" + repository, version);
+        try {
+            tagJson = isGitlabCee ?
+                    gitlabCeeRestClient.getTagInfo(codeSpace + "/" + repository, version, "Bearer " + gitlabKey) :
+                    gitlabRestClient.getTagInfo(codeSpace + "/" + repository, version);
+        } catch (ClientWebApplicationException e) {
+            logger.errorf("Failed to retrieve tag info for %s in constructGitlabBuild", tagUrl.toString());
+            throw new GitRestClientException("Failed to retrieve tag info from Gitlab: " + e.getMessage(), e, e.getResponse());
+        }
+
         if (tagJson != null) {
             return buildBuildInfo(tagUrl, codeSpace, repository, tagJson.get(NAME).textValue(), tagJson.get(COMMIT).get(ID).textValue());
         }

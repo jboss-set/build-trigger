@@ -4,15 +4,14 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import org.jboss.logging.Logger;
-import org.jboss.resteasy.reactive.ClientWebApplicationException;
 
 @Provider
-public class GitRestClientExceptionMapper implements ExceptionMapper<ClientWebApplicationException> {
+public class GitRestClientExceptionMapper implements ExceptionMapper<GitRestClientException> {
 
     Logger logger = Logger.getLogger(GitRestClientExceptionMapper.class);
 
     @Override
-    public Response toResponse(ClientWebApplicationException exception) {
+    public Response toResponse(GitRestClientException exception) {
         int responseCode = exception.getResponse().getStatus();
 
         logger.error(String.format("Invocation returned HTTP %s %s", responseCode, exception.getResponse().getStatusInfo().getReasonPhrase()));
