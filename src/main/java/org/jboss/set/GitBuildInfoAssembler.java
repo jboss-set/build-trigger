@@ -52,7 +52,8 @@ public class GitBuildInfoAssembler {
         if (splitURL.length < 3) {
             // Valid URL is always <host>/<repo>/<project>/../<tag>
             // This applies to Github and Gitlab
-            logger.warn("Invalid URL, returning null");
+            logger.warnf("Invalid URL format provided. The URL must be in the format <host>/<repo>/<project>/../<tag> for Gitlab/Github. "
+                    + "URL: " + tagUrl + ". Returning null.");
             return null;
         }
         if (tagUrl.getHost().equals("gitlab.cee.redhat.com")) {
@@ -64,7 +65,7 @@ public class GitBuildInfoAssembler {
         if (tagUrl.getHost().contains("gitlab.")) {
             return constructGitlabBuild(splitURL, tagUrl, false);
         }
-        logger.warnf("%s is unsupported, only Github and Gitlab are supported at this moment.", tagUrl.getHost());
+        logger.warnf("Unsupported host: %s. Currently, only GitHub and GitLab hosts are supported.", tagUrl.getHost());
         return null;
     }
 
@@ -77,12 +78,12 @@ public class GitBuildInfoAssembler {
         try {
             refsJson = githubRestClient.getRefsInfo(codeSpace, repository, version, "Bearer " + githubKey);
         } catch (ClientWebApplicationException e) {
-            logger.errorf("Failed to retrieve refs info for %s in constructGithubBuild", tagUrl.toString());
-            throw new GitRestClientException("Failed to retrieve refs info from Github: " + e.getMessage(), e, e.getResponse());
+            logger.errorf("Failed to retrieve reference info for URL: %s from GitHub. Exception: %s", tagUrl.toString(), e.getMessage());
+            throw new GitRestClientException("Failed to retrieve refs info from Github. " + e.getMessage(), e, e.getResponse());
         }
 
         if (refsJson == null) {
-            logger.warnf("Failed to create BuildInfo for %s", tagUrl.toString());
+            logger.warnf("GitHub API returned null for reference info for URL: %s", tagUrl.toString());
             return null;
         }
 
@@ -93,12 +94,12 @@ public class GitBuildInfoAssembler {
             try {
                 tagJson = githubRestClient.getTagInfo(codeSpace, repository, commitSHA, "Bearer " + githubKey);
             } catch (ClientWebApplicationException e) {
-                logger.errorf("Failed to retrieve tag info for %s in constructGithubBuild", tagUrl.toString());
-                throw new GitRestClientException("Failed to retrieve tag info from Github: " + e.getMessage(), e, e.getResponse());
+                logger.errorf("Failed to retrieve tag info for URL: %s from GitHub. Exception: %s", tagUrl.toString(), e.getMessage());
+                throw new GitRestClientException("Failed to retrieve tag info from Github. " + e.getMessage(), e, e.getResponse());
             }
 
             if (tagJson == null) {
-                logger.warnf("Failed to retrieve tag info for %s", tagUrl.toString());
+                logger.warnf("GitHub API returned null for tag info for URL: %s", tagUrl.toString());
                 return null;
             }
             commitSHA = tagJson.path(OBJECT).path(SHA).asText();  // Update SHA from tag info
@@ -117,14 +118,14 @@ public class GitBuildInfoAssembler {
                     gitlabCeeRestClient.getTagInfo(codeSpace + "/" + repository, version, "Bearer " + gitlabKey) :
                     gitlabRestClient.getTagInfo(codeSpace + "/" + repository, version);
         } catch (ClientWebApplicationException e) {
-            logger.errorf("Failed to retrieve tag info for %s in constructGitlabBuild", tagUrl.toString());
-            throw new GitRestClientException("Failed to retrieve tag info from Gitlab: " + e.getMessage(), e, e.getResponse());
+            logger.errorf("Failed to retrieve tag info for URL: %s from GitLab. Exception: %s", tagUrl.toString(), e.getMessage());
+            throw new GitRestClientException("Failed to retrieve tag info from Gitlab. " + e.getMessage(), e, e.getResponse());
         }
 
         if (tagJson != null) {
             return buildBuildInfo(tagUrl, codeSpace, repository, tagJson.get(NAME).textValue(), tagJson.get(COMMIT).get(ID).textValue());
         }
-        logger.warnf("Failed to create BuildInfo for %s", tagUrl.toString());
+        logger.warnf("GitLab API returned null for tag info for URL: %s", tagUrl.toString());
         return null;
     }
 
