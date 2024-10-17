@@ -130,13 +130,14 @@ public class GitBuildInfoAssembler {
     }
 
     private BuildInfo buildBuildInfo(URL tagUrl, String codespace, String repository, String version, String commitSHA) {
-        BuildInfo buildInfo = new BuildInfo();
-        buildInfo.tag = tagUrl.toString();
-        buildInfo.commitSha = commitSHA;
-        buildInfo.gitRepo = String.format("%s://%s/%s/%s", tagUrl.getProtocol(), tagUrl.getHost(), codespace, repository);
-        buildInfo.projectVersion = version;
+        BuildInfo buildInfo = new BuildInfo.Builder()
+                .tag(tagUrl.toString())
+                .commitSha(commitSHA)
+                .gitRepo(String.format("%s://%s/%s/%s", tagUrl.getProtocol(), tagUrl.getHost(), codespace, repository))
+                .projectVersion(version)
+                .build();
 
-        logger.infof("Build created with following parameters - sha: %s, version: %s, link: %s", buildInfo.commitSha, buildInfo.projectVersion, buildInfo.tag);
+        logger.infof("Build created with following parameters - sha: %s, version: %s, link: %s", buildInfo.getCommitSha(), buildInfo.getProjectVersion(), buildInfo.getTag());
         return buildInfo;
     }
 }

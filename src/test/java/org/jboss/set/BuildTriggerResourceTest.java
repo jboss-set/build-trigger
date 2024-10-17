@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BuildTriggerResourceTest {
 
     private static final String USER_EMAIL = "user@email.com";
-    private static final String BUILD_INFO_TAG = "git+https://github.com/non-exisitent/repo/tree/1.0.0.Final.git";
-    private static final String BUILD_INFO_GIT_REPO = "git+https://github.com/non-exisitent/repo.git";
+    private static final String BUILD_INFO_TAG = "https://github.com/non-exisitent/repo/tree/1.0.0.Final.git";
+    private static final String BUILD_INFO_GIT_REPO = "https://github.com/non-exisitent/repo.git";
     private static final String BUILD_INFO_PROJECT_VERSION = "1.0.0.Final";
     private static final String BUILD_INFO_COMMIT_SHA = "61ec86095de795f5fb817a7cc824d8d7cfb9ae51";
     private static final List<String> BUILD_INFO_STREAMS = List.of(EAP_7_3_X.frontEnd);
@@ -41,8 +41,7 @@ public class BuildTriggerResourceTest {
         @Claim(key = "email", value = USER_EMAIL)
     })
     public void testTriggerEndpoint() throws Exception {
-        BuildInfo buildInfo = createTestBuildInfoWithoutStream();
-        buildInfo.streams = BUILD_INFO_STREAMS;
+        BuildInfo buildInfo = createTestBuildInfo();
 
         given()
             .body(objectMapper.writeValueAsString(buildInfo))
@@ -68,8 +67,7 @@ public class BuildTriggerResourceTest {
     @Disabled("Anonymous identity doesn't work in tests. (https://github.com/quarkusio/quarkus/issues/21888)")
     @TestSecurity
     public void testTriggerEndpointNoAuth() throws Exception {
-        BuildInfo buildInfo = createTestBuildInfoWithoutStream();
-        buildInfo.streams = BUILD_INFO_STREAMS;
+        BuildInfo buildInfo = createTestBuildInfo();
 
         given()
             .header("Authorization", "")
@@ -87,8 +85,9 @@ public class BuildTriggerResourceTest {
             @Claim(key = "email", value = USER_EMAIL)
     })
     public void testTriggerEndpointInvalidStream() throws Exception {
-        BuildInfo buildInfo = createTestBuildInfoWithoutStream();
-        buildInfo.streams = List.of("Invalid");
+        BuildInfo buildInfo = createTestBuildInfo().toBuilder()
+                .streams(List.of("Invalid"))
+                .build();
 
         given()
                 .body(objectMapper.writeValueAsString(buildInfo))
@@ -98,13 +97,13 @@ public class BuildTriggerResourceTest {
                 .statusCode(422);
     }
 
-    private BuildInfo createTestBuildInfoWithoutStream() {
-        BuildInfo buildInfo = new BuildInfo();
-        buildInfo.tag = BUILD_INFO_TAG;
-        buildInfo.gitRepo = BUILD_INFO_GIT_REPO;
-        buildInfo.projectVersion = BUILD_INFO_PROJECT_VERSION;
-        buildInfo.commitSha = BUILD_INFO_COMMIT_SHA;
-
-        return buildInfo;
+    private BuildInfo createTestBuildInfo() {
+        return new BuildInfo.Builder()
+                .tag(BUILD_INFO_TAG)
+                .gitRepo(BUILD_INFO_GIT_REPO)
+                .projectVersion(BUILD_INFO_PROJECT_VERSION)
+                .commitSha(BUILD_INFO_COMMIT_SHA)
+                .streams(BUILD_INFO_STREAMS)
+                .build();
     }
 }
