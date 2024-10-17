@@ -33,13 +33,13 @@ public class BuildJMSTriggerPayload {
 
     @Override
     public String toString() {
-        return "BuildJMSTriggerPayload{" +
-                "email='" + email + '\'' +
-                ", publicTag='" + tag + '\'' +
-                ", gitRepo=" + gitRepo +
-                ", version='" + projectVersion + '\'' +
-                ", commitSha='" + commitSha + '\'' +
-                ", streams='" + streams + '\'' +
+        return "BuildJMSTriggerPayload{" + "\n" +
+                "email='" + email + '\'' + "\n" +
+                ", publicTag='" + tag + '\'' + "\n" +
+                ", gitRepo=" + gitRepo + "\n" +
+                ", version='" + projectVersion + '\'' + "\n" +
+                ", commitSha='" + commitSha + '\'' + "\n" +
+                ", streams='" + streams + '\'' + "\n" +
                 '}';
     }
 }
