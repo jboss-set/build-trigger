@@ -37,14 +37,14 @@ public class BuildTriggerResource {
     @Path("/trigger")
     public Response triggerBuild(@NotNull @Valid BuildInfo buildInfo) {
         String email = idToken.claim(Claims.email).orElse("Email not provided in the token").toString();
-        if (buildInfo.streams == null || buildInfo.streams.isEmpty()) {
+        if (buildInfo.getStreams() == null || buildInfo.getStreams().isEmpty()) {
             return Response.status(400, "List of streams is empty").build();
         }
         logger.infof("Triggering build for product %s by %s", buildInfo, email);
 
         buildTrigger.triggerBuild(BuildJMSTriggerPayload.from(buildInfo, email));
 
-        return Response.ok("Triggered build for " + buildInfo.gitRepo + ":" + buildInfo.projectVersion).build();
+        return Response.ok("Triggered build for " + buildInfo.getGitRepo() + ":" + buildInfo.getProjectVersion()).build();
     }
 
     @GET
