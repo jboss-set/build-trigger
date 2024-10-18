@@ -24,6 +24,12 @@ function formFieldTemplate(id, labelText, placeholder, alertMessage) {
     fieldContainer.innerHTML = formFieldHtml;
 
     document.getElementById("form-fields").appendChild(fieldContainer);
+
+    // Add an event listener to trim value on blur
+    const inputElement = fieldContainer.querySelector(`#${id}`);
+    inputElement.addEventListener('blur', function () {
+        this.value = this.value.trim();
+    });
 }
 
 export function createFormFields() {
