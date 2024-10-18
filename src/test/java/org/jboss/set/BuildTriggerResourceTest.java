@@ -50,7 +50,7 @@ public class BuildTriggerResourceTest {
             .when().post("/build-trigger/trigger")
             .then()
             .statusCode(200)
-            .body(is("Triggered build for " + BUILD_INFO_GIT_REPO + ":" + BUILD_INFO_PROJECT_VERSION));
+            .body(is("Build triggered successfully for repository " + BUILD_INFO_GIT_REPO + ", version: " + BUILD_INFO_PROJECT_VERSION));
 
         Mockito.verify(buildTrigger, Mockito.times(1))
             .triggerBuild(Mockito.argThat(x -> {

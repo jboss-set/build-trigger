@@ -24,10 +24,12 @@ public class JMSConnectionHealthCheck implements HealthCheck {
             connection.stop();
             return HealthCheckResponse.up(HC_NAME);
         } catch (JMSException e) {
+            String errorMessage = String.format("JMS connection failed in HealthCheck for %s. Cause: %s", HC_NAME, e.getMessage());
             return HealthCheckResponse.builder()
                 .name(HC_NAME)
                 .down()
-                .withData("exception", e.toString())
+                .withData("error", errorMessage)
+                .withData("exception", e.getClass().getName())
                 .build();
         }
     }

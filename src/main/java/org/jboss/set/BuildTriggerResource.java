@@ -38,27 +38,33 @@ public class BuildTriggerResource {
     public Response triggerBuild(@NotNull @Valid BuildInfo buildInfo) {
         String email = idToken.claim(Claims.email).orElse("Email not provided in the token").toString();
         if (buildInfo.streams == null || buildInfo.streams.isEmpty()) {
-            return Response.status(400, "List of streams is empty").build();
+            return Response.status(400, "The list of streams cannot be null or empty. "
+                    + "Please provide valid streams.").build();
         }
         logger.infof("Triggering build for product %s by %s", buildInfo, email);
 
         buildTrigger.triggerBuild(BuildJMSTriggerPayload.from(buildInfo, email));
 
-        return Response.ok("Triggered build for " + buildInfo.gitRepo + ":" + buildInfo.projectVersion).build();
+        return Response.ok("Build triggered successfully for repository " + buildInfo.gitRepo
+                + ", version: " + buildInfo.projectVersion).build();
     }
 
     @GET
     @Path("/getBuildInfo")
     public Response getBuildInfoFromGit(@NotNull @Valid @QueryParam("tag") String url) {
-        logger.info("Fetching remote repository: " + url);
+        logger.infof("Fetching remote repository: " + url);
         try {
             BuildInfo buildInfo = gitBuildInfoAssembler.constructBuildFromURL(new URL(url));
             if (buildInfo == null) {
-                return Response.noContent().build();
+                return Response.status(Response.Status.NO_CONTENT)
+                        .entity(String.format("No build information available for the given URL: %s", url))
+                        .build();
             }
+
+            logger.infof("Successfully fetched build information for URL: %s", url);
             return Response.ok(buildInfo).build();
         } catch (MalformedURLException e) {
-            logger.error("Invalid URL. Cannot obtain tag data.");
+            logger.errorf("Invalid URL format provided: %s. Exception: %s", url, e.getMessage());
             return null;
         }
     }
