@@ -16,11 +16,11 @@ public class BuildJMSTriggerPayload {
         BuildJMSTriggerPayload createBuildPayload = new BuildJMSTriggerPayload();
 
         createBuildPayload.email = email;
-        createBuildPayload.tag = buildInfo.tag;
-        createBuildPayload.gitRepo = buildInfo.gitRepo;
-        createBuildPayload.projectVersion = buildInfo.projectVersion;
-        createBuildPayload.commitSha = buildInfo.commitSha;
-        createBuildPayload.streams = getStreams(buildInfo.streams);
+        createBuildPayload.tag = buildInfo.getTag();
+        createBuildPayload.gitRepo = buildInfo.getGitRepo();
+        createBuildPayload.projectVersion = buildInfo.getProjectVersion();
+        createBuildPayload.commitSha = buildInfo.getCommitSha();
+        createBuildPayload.streams = getStreams(buildInfo.getStreams());
 
         return createBuildPayload;
     }
